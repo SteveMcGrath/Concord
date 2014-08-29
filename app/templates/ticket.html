@@ -1,0 +1,87 @@
+<html>
+	<head>
+		<title>{{ event_name }} Ticket</title>
+		<script type="text/javascript">
+			function printDiv(divName) {
+			     var printContents = document.getElementById(divName).innerHTML;
+			     var originalContents = document.body.innerHTML;
+
+			     document.body.innerHTML = printContents;
+
+			     window.print();
+
+			     document.body.innerHTML = originalContents;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="printDiv('ticket')" value="Print Ticket" style="width: 412px;margin-bottom: 10px;"/>
+		<div id="ticket">
+			<style type="text/css">
+				@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+
+				body {
+					font-family: 'Droid Sans Mono', ;
+				}
+
+				#ticket {
+					width: 410px;
+					border: 1px dashed #000;
+				}
+
+				#ticket-header {
+					background-color: #000;
+					color: #FFF;
+					width: 100%;
+					height: 50px;
+				}
+
+				#ticket-header h1 {
+					text-align: center;
+					position: relative;
+					top: 50%;
+					-webkit-transform: translateY(-50%);
+					-ms-transform: translateY(-50%);
+					transform: translateY(-50%);
+					font-size: 28px;
+				}
+
+				#ticket-code {
+					width: 100%;
+					margin-left: 0px;
+					margin-right: 0px;
+				}
+
+				figcaption {
+					text-align: center;
+				}
+
+				#ticket-footer {
+					background-color: #bbb;
+					min-height: 200px;
+					height: 200px;
+				}
+
+				#ticket-footer p {
+					padding-top: 10px;
+					padding-left: 5px;
+					padding-right: 5px;
+				}
+			</style>
+			<div id="ticket-header">
+				<h1>{{ event_name }}</h1>
+			</div>
+			<figure id="ticket-code">
+				<center>
+				<img src="data:image/png;base64,{{ image_data }}" />
+				</center>
+				<figcaption>
+					{{ ticket_id }}
+				</figcaption>
+			</figure>
+			<div id="ticket-footer">
+				{{ ticket_footer|safe }}
+			</div>
+		</div>
+	</body>
+</html>

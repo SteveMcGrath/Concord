@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block inner_content %}
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="hero-unit">
+	<div class="row">
+		<div class="span4">
+			<pre style="background-color: #0aa;color: #FFF;">
+
+         `-////:-         
+     -smds+//+oyddo.     
+   :dd/`         .omy.   
+  oN/              `sN:  
+ /M:                 sN. 
+ dd                  `Mo 
+ mh                   Ms 
+ sN`                 /M: 
+ `dd`     .---`     -Ns  
+  `yN+` +mdssymd: .sN+   
+    -smdMs````.hMdmo`    
+       hMshhhhysMy       
+       yM      `s/       
+      -dM:::::::::.      
+      yMssssssssyM+      
+      yM Circle -M+      
+      yM City   -M+      
+      yM Con    -M+      
+      yM        :M+      
+      ohhhhhhhhhhh:      
+			</pre>
+		</div>
+		<div class="span7">
+			<h1>README.txt</h1>
+			<p>CircleCityCon is the first hacker con in Indianapolis.</p>
+			<p>It is in a small to medium sized venue located in the heart 
+				of Indianapolis. The venue itself is within walking distance 
+				of numerous food and bar establishments. We will have two 
+				large tracks, as well as events throughout the conference from 
+				early morning until late in the night. This gives the con attendees 
+				many different options. It will be an extremely eventful experience.
+			</p>
+			<p>As we grow in the coming months we will have lots of surprises.</p>
+			<!-- <p><a href="#" class="btn btn-primary btn-large">Learn more</a></p> -->
+		</div>
+	</div>
+</div>
+
+<!-- Example row of columns -->
+<div class="row">
+	<div class="span6">
+		<h2>INFO.TXT</h2>
+		<p><strong>WHEN : </strong>06-12-2015 - 06-14-2015</p>
+		<p><strong>WHERE : </strong><a class="btn" href="{{ url_for('location') }}">Hyatt Regency Indianapolis</a></p>
+		<p><strong>CFP OPEN : </strong><a class="btn" href="{{ url_for('cfp') }}">TBD</a></p>
+		<p><strong>TICKETS ON SALE : </strong><a class="btn" href="{{ url_for('tickets') }}">TBD</a></p>
+		<p><strong>TRAINING REG : </strong><a class="btn" href="{{ url_for('training') }}">TBD</a></p>
+	</div>
+	<div class="span5">
+		<h2>Heading</h2>
+		<p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+		<p><a class="btn" href="#">View details</a></p>
+	</div>
+</div>
+{% endblock %}

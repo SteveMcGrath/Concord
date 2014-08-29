@@ -80,7 +80,7 @@ class User(db.Model, UserMixin):
     admin = db.Column(db.Boolean, default=False)
     bio = db.Column(db.Text, default='Currently no Bio')
     submissions = db.relationship('Submission', secondary=user_subs,
-                            backref=db.backref('submissions', lazy='dynamic'))
+                            backref=db.backref('speakers', lazy='dynamic'))
 
     @hybrid_property
     def is_speaker(self):
@@ -100,9 +100,9 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return self.password == gen_hash(password)
 
-    def gen_ticket(self, discount=100):
+    def gen_ticket(self, price=0):
         ticket = Ticket(self.email, ticket_type='speaker')
-        ticket.price = 0
+        ticket.price = price
         ticket.user_id = self.id
 
 
@@ -111,7 +111,7 @@ class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     accepted = db.Column(db.Boolean, default=False)
-    status = db.Column(db.String(16))
+    status = db.Column(db.String(16), default='submitted')
     abstract = db.Column(db.Text)
     title = db.Column(db.String(255))
     outline = db.Column(db.Text)
@@ -127,6 +127,8 @@ class Submission(db.Model):
     track = db.Column(db.String(32))
     seats = db.Column(db.Integer)
     tod = db.Column(db.DateTime)
+    review_rating = db.Column(db.Integer)
+    review_notes = db.Column(db.Text)
 
     @hybrid_property
     def pretty_abstract(self):

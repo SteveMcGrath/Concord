@@ -122,7 +122,6 @@ class Submission(db.Model):
     time = db.Column(db.Integer, default=50)
     training = db.Column(db.Boolean, default=False)
     new_talk = db.Column(db.Boolean, default=False)
-    other_speakers = db.Column(db.Text)     #For Email addresses for later association.
     needs = db.Column(db.Text)
     track = db.Column(db.String(32))
     seats = db.Column(db.Integer)

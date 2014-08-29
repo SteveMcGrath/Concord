@@ -1,7 +1,54 @@
-from flask import (render_template, flash, redirect, session, url_for, 
-                   abort, g, make_response)
-from app import app
-import ticket
+from flask import render_template, flash, redirect, session, url_for, abort, g
+from flask.ext.login import login_user, logout_user, current_user, login_required
+from app import app, db, login_manager
+from app.models import User, Submission, Ticket
+from sqlalchemy import desc
+import forms
+
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.filter_by(id=int(userid)).first()
+
+
+@app.before_request
+def before_request():
+    g.user = current_user
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if g.user.is_authenticated():
+        return redirect(url_for('user_info', username=g.user.username))
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is not None and user.check_password(form.password.data):
+            login_user(user)
+            return redirect(url_for('user_info', username=user.username))
+        else:
+            user = None
+        if user == None:
+            flash('Invalid Username or Password', 'error')
+    return render_template('login.html', title='Sign In', login=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route('/user/<username>')
+def user_info(username):
+    if g.user.username == username or g.user.admin:
+        user = User.query.filter_by(username=username).first_or_404()
+        return render_template('user_info.html', person=user, 
+                                title='%s - Information' % user.username)
+    return redirect(url_for('home'))
+
+
+
 
 @app.route('/')
 def home():
@@ -11,6 +58,13 @@ def home():
 @app.route('/cfp')
 def cfp():
     return render_template('construction.html', title='Call For Papers')
+
+
+@app.route('/cfp/<cfp_id>', methods=['GET', 'POST'])
+@login_required
+def cfp_edit(cfp_id='new'):
+    form = forms.CallForPaperForm()
+
 
 
 @app.route('/tickets')
@@ -53,22 +107,5 @@ def ticket_print(ticket_id):
     '''
     Generates a printable ticket.
     '''
-    ### ADD CHECKING CODE HERE
-    ### ADJUST THIS CODE TO PULL FROM DB!!!!
-    event_name = 'CircleCityCon 2015'
-    return render_template('ticket.html', 
-        event_name=event_name,
-        image_data=ticket.qrgen(ticket_id, True),
-        ticket_id=ticket_id,
-        ticket_footer='\n'.join([
-            '<p>This is my ticket.',
-            'There are many others like it but this one is mine.',
-            '</p>',
-            '<p>This ticket grants one entry into',
-            '<strong>%s</strong>.' % event_name,
-            'Take care with it, as if multiple\'s exist, only the',
-            'first person to get this ticket scanned will be allowed',
-            'entry.  Take care!<br />',
-            '&nbsp;&nbsp;&nbsp;&nbsp;--Your Ticket</p>'
-        ]),
-    )
+    ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
+    return ticket.generate('CircleCityCon 2015')

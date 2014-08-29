@@ -70,6 +70,7 @@
 			</style>
 			<div id="ticket-header">
 				<h1>{{ event_name }}</h1>
+				<h2>{{ ticket_type }}</h2>
 			</div>
 			<figure id="ticket-code">
 				<center>
@@ -80,7 +81,12 @@
 				</figcaption>
 			</figure>
 			<div id="ticket-footer">
-				{{ ticket_footer|safe }}
+				<p>This is my ticket.There are many others like it but this one is mine.</p>
+				<p>This ticket grants one entry into<strong>{{ event_name }}</strong>.  
+				   Take care with it, as if multiple\'s exist, only thefirst person to get 
+				   this ticket scanned will be allowedentry.  Take care!
+				   <br />&nbsp;&nbsp;&nbsp;&nbsp;--Your Ticket
+				</p>
 			</div>
 		</div>
 	</body>

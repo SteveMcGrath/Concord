@@ -4,8 +4,10 @@ from time import time
 from flask.ext.login import UserMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import desc
-import markdown
-import hashlib
+from StringIO import StringIO
+from flask import render_template
+import base64, qrcode, markdown, hashlib
+
 
 def gen_hash(*elements):
     md5 = hashlib.md5()
@@ -45,6 +47,28 @@ class Ticket(db.Model):
         if self.training_id is not None:
             return Submission.query.filter_by(id=self.training_id).first()
         return None
+
+    def qrgen(self, encode=True):
+        imgbuf = StringIO()
+        imgraw = qrcode.make('http://ticket/%s' % self.ticket_hash)
+        imgraw.save(imgbuf, 'PNG')
+        data = imgbuf.getvalue()
+        imgbuf.close()
+        if encode:
+            return base64.b64encode(data)
+        else:
+            return response
+
+    def generate(self, event):
+        return render_template('ticket.html', 
+                event_name=event,
+                ticket_type=self.ticket_type,
+                image_data=self.qrgen(),
+                ticket_id=self.ticket_hash,
+            ]),
+        )
+
+
 
 
 class User(db.Model, UserMixin):

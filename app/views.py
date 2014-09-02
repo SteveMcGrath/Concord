@@ -30,7 +30,7 @@ def login():
             user = None
         if user == None:
             flash('Invalid Username or Password', 'error')
-    return render_template('login.html', title='Sign In', login=form)
+    return render_template('login.html', title='Sign In', form=form)
 
 
 @app.route('/logout')
@@ -68,6 +68,7 @@ def cfp_edit(cfp_id=None):
             submission = Submission.query.filter_by(id=cfp_id).first_or_404()
         else:
             submission = Submission()
+            db.session.add(submission)
         form = forms.CallForPaperForm(obj=submission)
         if form.validate_on_submit():
             form.populate_obj(submission)
@@ -76,7 +77,7 @@ def cfp_edit(cfp_id=None):
                 flash('CFP Submission Updated')
             else:
                 flash('CFP Submission Created')
-        return render_template('cfp_edit.html', submission=submission, 
+        return render_template('cfp/edit.html', submission=submission, 
                                form=form, title='CFP Edit/Creation Form')
     return redirect(url_for('home'))
 
@@ -86,12 +87,15 @@ def cfp_edit(cfp_id=None):
 def cfp_review(cfp_id):
     if g.user.admin:
         submission = Submission.query.filter_by(id=cfp_id).first_or_404()
+        if submission.status == 'submitted':
+            submission.status = 'pending review'
+            db.session.commit()
         form = forms.CallForPaperReviewForm(obj=submission)
         if form.validate_on_submit():
             form.populate_obj(submission)
             db.session.commit()
             flash('Review Status Updated')
-        return render_template('cfp_review.html', submission=submission,
+        return render_template('cfp/review.html', submission=submission,
                                title='CFP %s Review' % cfp_id)
     return redirect(url_for('home'))
 
@@ -132,12 +136,12 @@ def cfp_reject(cfp_id):
 @login_required
 def cfp_review_list():
     if g.user.admin:
-        unviewed = Submission.query.filter_by(status='submitted').all()
-        pending = Submission.query.filter_by(status='pending review').all()
-        reviewing = Submission.query.filter_by(status='under review').all()
-        accepted = Submission.query.filter_by(status='accepted').all()
-        rejected = Submission.query.filter_by(status='rejected').all()
-        return render_template('cfp_review_list.html', )
+        return render_template('cfp/review_list.html', 
+            unviewed=Submission.query.filter_by(status='submitted').all(),
+            pending = Submission.query.filter_by(status='pending review').all(),
+            reviewing = Submission.query.filter_by(status='under review').all(),
+            accepted = Submission.query.filter_by(status='accepted').all(),
+            rejected = Submission.query.filter_by(status='rejected').all())
 
 
 @app.route('/tickets')
@@ -181,4 +185,4 @@ def ticket_print(ticket_id):
     Generates a printable ticket.
     '''
     ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
-    return ticket.generate('CircleCityCon 2015')
+    return ticket.generate(app.config['CONFERENCE_EVENT'])

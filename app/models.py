@@ -42,12 +42,6 @@ class Ticket(db.Model):
         self.redeem_hash = gen_hash(email, str(time()))
         self.ticket_hash = gen_hash(email, self.redeem_hash)
 
-    @hybrid_property
-    def training(self):
-        if self.training_id is not None:
-            return Submission.query.filter_by(id=self.training_id).first()
-        return None
-
     def qrgen(self, encode=True):
         imgbuf = StringIO()
         imgraw = qrcode.make('http://ticket/%s' % self.ticket_hash)
@@ -60,13 +54,12 @@ class Ticket(db.Model):
             return response
 
     def generate(self, event):
-        return render_template('ticket.html', 
+        return render_template('ticketing/print.html', 
                 event_name=event,
                 ticket_type=self.ticket_type,
                 image_data=self.qrgen(),
                 ticket_id=self.ticket_hash,
-            ]),
-        )
+            )
 
 
 
@@ -81,6 +74,10 @@ class User(db.Model, UserMixin):
     bio = db.Column(db.Text, default='Currently no Bio')
     submissions = db.relationship('Submission', secondary=user_subs,
                             backref=db.backref('speakers', lazy='dynamic'))
+    tickets = db.relationship(Ticket, backref='user',
+        primaryjoin='User.id==Ticket.user_id',
+        foreign_keys=[Ticket.__table__.c.user_id],
+        passive_deletes='all')
 
     @hybrid_property
     def is_speaker(self):
@@ -100,8 +97,8 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return self.password == gen_hash(password)
 
-    def gen_ticket(self, price=0):
-        ticket = Ticket(self.email, ticket_type='speaker')
+    def gen_ticket(self, price=0, ticket_type='speaker'):
+        ticket = Ticket(self.email, ticket_type=ticket_type)
         ticket.price = price
         ticket.user_id = self.id
 
@@ -126,8 +123,12 @@ class Submission(db.Model):
     track = db.Column(db.String(32))
     seats = db.Column(db.Integer)
     tod = db.Column(db.DateTime)
-    review_rating = db.Column(db.Integer)
+    review_rating = db.Column(db.Integer, default=0)
     review_notes = db.Column(db.Text)
+    tickets = db.relationship(Ticket, backref='training',
+        primaryjoin='Submission.id==Ticket.training_id',
+        foreign_keys=[Ticket.__table__.c.training_id],
+        passive_deletes='all')
 
     @hybrid_property
     def pretty_abstract(self):

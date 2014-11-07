@@ -16,16 +16,32 @@ def gen_hash(*elements):
     return md5.hexdigest()
 
 
-user_subs = db.Table('user_subs',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('submission_id', db.Integer, db.ForeignKey('submissions.id'))
-)
+#instructors = db.Table('instructors',
+#    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+#    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
+#)
+#
+#speakers = db.Table('speakers',
+#    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+#    db.Column('talks_id', db.Integer, db.ForeignKey('talks.id'))
+#)
+#
+#talk_tags = db.Table('talk_tags',
+#    db.Column('tags_id', db.Integer, db.ForeignKey('tags.id')),
+#    db.Column('talks_id', db.Integer, db.ForeignKey('talks.id'))
+#)
+#
+#class_tags = db.Table('class_tags',
+#    db.Column('tags_id', db.Integer, db.ForeignKey('tags.id')),
+#    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
+#)
 
 
 class Ticket(db.Model):
     __tablename__ = 'tickets'
     id = db.Column(db.Integer, primary_key=True)
     ticket_type = db.Column(db.Text, default='attendee')
+    ticket_sub = db.Column(db.Text, default='general')
     ticket_hash = db.Column(db.Text)
     redeem_hash = db.Column(db.Text)
     email = db.Column(db.Text)
@@ -35,8 +51,9 @@ class Ticket(db.Model):
     redeemed = db.Column(db.Boolean, default=False)
     training_id = db.Column(db.Integer, default=None)
 
-    def __init__(self, email, opt_in=False, ticket_type='attendee'):
+    def __init__(self, email, opt_in=False, ticket_type='attendee', subtype='general'):
         self.ticket_type = ticket_type
+        self.ticket_sub = subtype
         self.email = email
         self.opt_in = opt_in
         self.redeem_hash = gen_hash(email, str(time()))
@@ -62,8 +79,6 @@ class Ticket(db.Model):
             )
 
 
-
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -72,8 +87,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255))
     admin = db.Column(db.Boolean, default=False)
     bio = db.Column(db.Text, default='Currently no Bio')
-    submissions = db.relationship('Submission', secondary=user_subs,
-                            backref=db.backref('speakers', lazy='dynamic'))
     tickets = db.relationship(Ticket, backref='user',
         primaryjoin='User.id==Ticket.user_id',
         foreign_keys=[Ticket.__table__.c.user_id],
@@ -82,8 +95,11 @@ class User(db.Model, UserMixin):
     @hybrid_property
     def is_speaker(self):
         value = False
-        for submission in self.submissions:
-            if submission.accepted:
+        for talk in self.talks:
+            if talk.status == 'accepted':
+                value = True
+        for training in self.trainings:
+            if training.status == 'accepted':
                 value = True
         return value
 
@@ -103,33 +119,4 @@ class User(db.Model, UserMixin):
         ticket.user_id = self.id
 
 
-class Submission(db.Model):
-    __tablename__ = 'submissions'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    accepted = db.Column(db.Boolean, default=False)
-    status = db.Column(db.String(16), default='submitted')
-    abstract = db.Column(db.Text)
-    title = db.Column(db.String(255))
-    outline = db.Column(db.Text)
-    tool = db.Column(db.Boolean, default=False)
-    exploit = db.Column(db.Boolean, default=False)
-    panel = db.Column(db.Boolean, default=False)
-    demo = db.Column(db.Boolean, default=False)
-    time = db.Column(db.Integer, default=50)
-    training = db.Column(db.Boolean, default=False)
-    new_talk = db.Column(db.Boolean, default=False)
-    needs = db.Column(db.Text)
-    track = db.Column(db.String(32))
-    seats = db.Column(db.Integer)
-    tod = db.Column(db.DateTime)
-    review_rating = db.Column(db.Integer, default=0)
-    review_notes = db.Column(db.Text)
-    tickets = db.relationship(Ticket, backref='training',
-        primaryjoin='Submission.id==Ticket.training_id',
-        foreign_keys=[Ticket.__table__.c.training_id],
-        passive_deletes='all')
 
-    @hybrid_property
-    def pretty_abstract(self):
-        return markdown.markdown(self.abstract)

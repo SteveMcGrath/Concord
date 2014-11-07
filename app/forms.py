@@ -4,7 +4,7 @@ from wtforms.fields import *
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import Required, Optional, Email
 from sqlalchemy import desc, or_, and_
-from app.models import Ticket, User, Submission
+from app.models import Ticket, User
 
 
 def open_training():
@@ -41,6 +41,7 @@ class CFPSubmissionForm(Form):
     demo = BooleanField('Will there be a live demo?', default=False)
     new_talk = BooleanField('Is this a new talk?', default=False)
     time = IntegerField('How many minutes is this Talk?', default=50)
+    why = TextAreaField('Why should we accept your talk?')
     needs = TextAreaField('Are there any Specific Needs?')
     submit = SubmitField('Submit CFP Submission')
 
@@ -48,10 +49,14 @@ class CFPSubmissionForm(Form):
 class CFTSubmissionForm(Form):
     title = TextField('Title', validators=[Required()])
     abstract = TextAreaField('Abstract', validators=[Required()])
-    outline = TextAreaField('Outline', validators=[Required()])
-    new_talk = BooleanField('Is this a new training class?', default=False)
-    hours = IntegerField('How many hours is this training?', default=4)
-    seats = IntegerField('Whats the maximum number of students?', default=30)
+    outline = TextAreaField('Syllabus', validators=[Required()])
+    new_class = BooleanField('Is this a new training class?', default=False)
+    days = IntegerField('How many days is this training?', default=1)
+    hours = IntegerField('How many hours a day is this training?', default=4)
+    min_seats = IntegerField('Whats the Minimum number of students?', default=10)
+    max_seats = IntegerField('Whats the maximum number of students?', default=30)
+    why = TextAreaField('Why should we accept your class?')
+    needs = TextAreaField('Are there any Specific Needs?')
     submit = SubmitField('Submit CFT Submission')
 
 
@@ -63,17 +68,12 @@ class CFPReviewForm(Form):
         ('rejected', 'Rejected'),
     ))
     review_rating = SelectField('Rating', choices=(
-        (0, 'Un-rated')
+        (0, 'Un-rated'),
         (1, '1 Star'),
         (2, '2 Stars'),
         (3, '3 Stars'),
         (4, '4 Stars'),
         (5, '5 Stars'),
-        (6, '6 Stars'),
-        (7, '7 Stars'),
-        (8, '8 Stars'),
-        (9, '9 Stars'),
-        (10, '10 Stars'),
     ), validators=[Required()])
     review_notes = TextField('Review Notes')
     submit = SubmitField('Update Review Status')

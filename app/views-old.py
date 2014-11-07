@@ -3,6 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from app import app, db, login_manager
 from app.models import User, Submission, Ticket
 from sqlalchemy import desc
+from datetime import datetime
 import forms
 
 
@@ -146,37 +147,15 @@ def cfp_review_list():
 
 @app.route('/tickets')
 def tickets():
+    attendees = Ticket.query.filter_by(ticket_type='attendee').count()
+    earlybird = Ticket.query.filter_by(ticket_type='attendee').count()
+    tickets = 'On Sale %s' % app.config['TICKETS_START'].strftime('%Y-%m-%d %H:%M')
+    ebtickets = 'On Sale %s' % app.config['EARLYBIRD_START'].strftime('%Y-%m-%d %H:%M')
+    if datetime.now() > app.config['EARLYBIRD_START']:
+        if earlybird < 
+    if attendees < app.config['TICKET_LIMIT']:
+
     return render_template('construction.html', title='Tickets')
-
-
-@app.route('/schedule')
-def schedule():
-    return render_template('construction.html', title='Schedule')
-
-
-@app.route('/sponsors')
-def sponsors():
-    return render_template('construction.html', title='Sponsors')
-
-
-@app.route('/location')
-def location():
-    return render_template('location.html', title='Location')
-
-
-@app.route('/events')
-def events():
-    return render_template('construction.html', title='Events')
-
-
-@app.route('/training')
-def training():
-    return render_template('construction.html', title='Training')
-
-
-@app.route('/about')
-def about():
-    return render_template('construction.html', title='About Us')
 
 
 @app.route('/tickets/print/<ticket_id>')

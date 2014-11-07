@@ -45,5 +45,5 @@ def about():
 
 
 @app.route('/cft')
-def cft_page():
+def cft():
     return render_template('cft/cft/html', title='Call for Training')

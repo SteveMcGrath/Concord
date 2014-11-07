@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 @app.route('/cfp')
-def cfp_home():
+def cfp():
     return render_template('/cfp/home.html', title='Call for Papers')
 
 

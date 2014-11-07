@@ -14,10 +14,6 @@ def home():
     return render_template('home.html', title='Home')
 
 
-@app.route('/cfp')
-def cfp():
-    return render_template('construction.html', title='Call For Papers')
-
 @app.route('/schedule')
 def schedule():
     return render_template('construction.html', title='Schedule')
@@ -46,3 +42,8 @@ def training():
 @app.route('/about')
 def about():
     return render_template('construction.html', title='About Us')
+
+
+@app.route('/cft')
+def cft_page():
+    return render_template('cft/cft/html', title='Call for Training')

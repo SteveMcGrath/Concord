@@ -1,0 +1,19 @@
+[Unit]
+Description=Condord Web Service
+After=mariadb.service
+Requires=mariadb.service
+
+[Service]
+Type=forking
+Environment=
+WorkingDirectory=/opt/Concord
+ExecStart=/usr/bin/paster serve /opt/Condord/production.ini \
+          --pid-file=/var/run/concord/concord.pid \
+          --log-file=/var/log/concord/concord.log \
+          --daemon \
+ExecStop=/usr/bin/paster serve /opt/Concord/production.ini \
+          --pid-file=/var/run/concord/concord.pid stop
+PIDFile=/var/run/concord/concord.pid
+
+[Install]
+WantedBy=multi-user.target

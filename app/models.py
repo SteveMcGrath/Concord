@@ -1,6 +1,7 @@
-from app import db
+from app import db, app
 from datetime import datetime, date
 from time import time
+from random import random
 from flask.ext.login import UserMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import desc
@@ -16,47 +17,52 @@ def gen_hash(*elements):
     return md5.hexdigest()
 
 
-#instructors = db.Table('instructors',
-#    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-#    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
-#)
-#
-#speakers = db.Table('speakers',
-#    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-#    db.Column('talks_id', db.Integer, db.ForeignKey('talks.id'))
-#)
-#
-#talk_tags = db.Table('talk_tags',
-#    db.Column('tags_id', db.Integer, db.ForeignKey('tags.id')),
-#    db.Column('talks_id', db.Integer, db.ForeignKey('talks.id'))
-#)
-#
-#class_tags = db.Table('class_tags',
-#    db.Column('tags_id', db.Integer, db.ForeignKey('tags.id')),
-#    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
-#)
+ticket_purchases = db.Table('ticket_purchases',
+    db.Column('purchase_id', db.Integer, db.ForeignKey('purchases.id')),
+    db.Column('tickets_id', db.Integer, db.ForeignKey('tickets.id'))
+)
+
+class DiscountCode(db.Model):
+    __tablename__ = 'discountcodes'
+    id = db.Column(db.Integer, primary_key=True)
+    uses = db.Column(db.Integer, default=0)
+    code = db.Column(db.Text)
+    t_type = db.Column(db.Text, default='attendee')
+    price = db.Column(db.Integer)
+
+
+class Purchase(db.Model):
+    __tablename__ = 'purchases'
+    id = db.Column(db.Integer, primary_key=True)
+    ref_hash = db.Column(db.Text)
+    email = db.Column(db.Text)
+    opt_in = db.Column(db.Boolean, default=True)
+    price = db.Column(db.Integer)
+    ticket_type = db.Column(db.Text)
+    discountcode = db.Column(db.Text)
+    payment_type = db.Column(db.Text)
+    payment_token = db.Column(db.Text)
+    completed = db.Column(db.Boolean, default=False)
+    redeemed = db.Column(db.Boolean, default=False)
+    tickets = db.relationship('Ticket', backref='purchase')
+
+    def __init__(self):
+        self.ref_hash = gen_hash(str(time()), str(random()))
 
 
 class Ticket(db.Model):
     __tablename__ = 'tickets'
     id = db.Column(db.Integer, primary_key=True)
-    ticket_type = db.Column(db.Text, default='attendee')
-    ticket_sub = db.Column(db.Text, default='general')
+    ticket_type = db.Column(db.Text)
+    purchase_id = db.Column(db.Integer, db.ForeignKey('purchases.id'))
     ticket_hash = db.Column(db.Text)
-    redeem_hash = db.Column(db.Text)
-    email = db.Column(db.Text)
-    opt_in = db.Column(db.Boolean)
-    price = db.Column(db.Integer)
     user_id = db.Column(db.Integer, default=None)
-    redeemed = db.Column(db.Boolean, default=False)
-    training_id = db.Column(db.Integer, default=None)
 
-    def __init__(self, email, opt_in=False, ticket_type='attendee', subtype='general'):
+    def __init__(self, email, opt_in=False, ticket_type='attendee'):
         self.ticket_type = ticket_type
-        self.ticket_sub = subtype
         self.email = email
         self.opt_in = opt_in
-        self.redeem_hash = gen_hash(email, str(time()))
+        self.redeem_hash = gen_hash(email, str(time()), str(random()))
         self.ticket_hash = gen_hash(email, self.redeem_hash)
 
     def qrgen(self, encode=True):
@@ -72,7 +78,7 @@ class Ticket(db.Model):
 
     def generate(self, event):
         return render_template('ticketing/print.html', 
-                event_name=event,
+                event_name=app.config['CONFERENCE_EVENT'],
                 ticket_type=self.ticket_type,
                 image_data=self.qrgen(),
                 ticket_id=self.ticket_hash,

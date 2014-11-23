@@ -5,12 +5,13 @@ Requires=mariadb.service
 
 [Service]
 Type=forking
-Environment=
+Environment=PYTHONPATH=/opt/concord
 WorkingDirectory=/opt/concord
-ExecStart=/usr/bin/paster serve /opt/concord/production.ini \
+ExecStart=/usr/bin/paster serve \
           --pid-file=/var/run/concord/concord.pid \
           --log-file=/var/log/concord/concord.log \
           --daemon \
+          /opt/concord/production.ini start
 ExecStop=/usr/bin/paster serve /opt/concord/production.ini \
           --pid-file=/var/run/concord/concord.pid stop
 PIDFile=/var/run/concord/concord.pid

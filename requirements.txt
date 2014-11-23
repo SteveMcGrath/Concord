@@ -10,6 +10,8 @@ SQLAlchemy
 sqlalchemy-migrate
 WTForms
 markdown
+qrcode
+stripe
 
 # Enable these for production...
 #gunicorn

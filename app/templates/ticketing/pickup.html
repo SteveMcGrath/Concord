@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block inner_content %}
+<ul>
+{% for ticket in purchase.tickets %}
+	<li><a class="btn" href="/tickets/print/{{ ticket.ticket_hash }}">Ticket ({{ ticket.ticket_type }}/{{ ticket.ticket_hash }})</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

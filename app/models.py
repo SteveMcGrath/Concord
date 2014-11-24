@@ -36,14 +36,13 @@ class Purchase(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ref_hash = db.Column(db.Text)
     email = db.Column(db.Text)
-    opt_in = db.Column(db.Boolean, default=True)
     price = db.Column(db.Integer)
     ticket_type = db.Column(db.Text)
     discountcode = db.Column(db.Text)
     payment_type = db.Column(db.Text)
     payment_token = db.Column(db.Text)
+    children = db.Column(db.Integer)
     completed = db.Column(db.Boolean, default=False)
-    redeemed = db.Column(db.Boolean, default=False)
     tickets = db.relationship('Ticket', backref='purchase')
 
     def __init__(self):
@@ -57,13 +56,27 @@ class Ticket(db.Model):
     purchase_id = db.Column(db.Integer, db.ForeignKey('purchases.id'))
     ticket_hash = db.Column(db.Text)
     user_id = db.Column(db.Integer, default=None)
+    redeemed = db.Column(db.Boolean, default=False)
+    marketing = db.Column(db.Boolean, default=True)
+    email = db.Column(db.Text)
+    name = db.Column(db.Text)
+    company = db.Column(db.Text)
+    phone = db.Column(db.Text)
+    twitter = db.Column(db.Text)
+    linkedin = db.Column(db.Text)
+    facebook = db.Column(db.Text)
+    shirt = db.Column(db.Text)
+    fri_party = db.Column(db.Boolean)
+    sat_party = db.Column(db.Boolean)
+    thu_hfd = db.Column(db.Boolean)
+    fri_hfd = db.Column(db.Boolean)
+    sat_hfd = db.Column(db.Boolean)
+    helpus = db.Column(db.Text)
 
-    def __init__(self, email, opt_in=False, ticket_type='attendee'):
+    def __init__(self, email, ticket_type='attendee'):
         self.ticket_type = ticket_type
         self.email = email
-        self.opt_in = opt_in
-        self.redeem_hash = gen_hash(email, str(time()), str(random()))
-        self.ticket_hash = gen_hash(email, self.redeem_hash)
+        self.ticket_hash = gen_hash(email, str(time()), str(random()))
 
     def qrgen(self, encode=True):
         imgbuf = StringIO()

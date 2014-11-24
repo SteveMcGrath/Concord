@@ -112,11 +112,10 @@ def charge_card(purchase_hash):
     if purchase.ticket_type == 'family':
         purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee'))
         purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee'))
-        purchase.tickets.append(Ticket(purchase.email, ticket_type='child'))
-        purchase.tickets.append(Ticket(purchase.email, ticket_type='child'))
-        purchase.tickets.append(Ticket(purchase.email, ticket_type='child'))
     else:
         purchase.tickets.append(Ticket(purchase.email, ticket_type=purchase.ticket_type))
+    for i in range(purchase.children):
+        purchase.tickets.append(Ticket(purchase.email, ticket_type='child'))
     purchase.completed = True
 
     # If there is a discount code involved, we will need to decriment the use
@@ -150,7 +149,22 @@ def charge_card(purchase_hash):
 @app.route('/tickets/pickup/<purchase_hash>')
 def ticket_pickup(purchase_hash):
     purchase = Purchase.query.filter_by(ref_hash=purchase_hash, completed=True).first_or_404()
-    return render_template('ticketing/pickup.html', purchase=purchase)
+    return render_template('ticketing/pickup.html', purchase=purchase, title='Ticket Pickup')
+
+
+@app.route('/tickets/info/<ticket_id>', methods=['GET', 'POST'])
+def ticket_information(ticket_id):
+    ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
+    form = forms.TicketInfoForm()
+    print form.validate_on_submit()
+    print form.validate()
+    if form.validate_on_submit():
+        form.populate_obj(ticket)
+        ticket.redeemed = True
+        db.session.merge(ticket)
+        db.session.commit()
+        return redirect(url_for('ticket_print', ticket_id=ticket_id))
+    return render_template('ticketing/pickup_info.html', title='Ticket Info', form=form, ticket=ticket)
 
 
 @app.route('/tickets/print/<ticket_id>')

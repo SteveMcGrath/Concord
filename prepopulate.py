@@ -11,6 +11,7 @@ def genpw(username):
 
 def run():
     adminpw = genpw('admin')
+    print 'Admin Password : %s' % adminpw
     user = User(username='admin', 
                 password=adminpw, 
                 email='admin@localhost',

@@ -36,7 +36,7 @@ def events():
 
 @app.route('/training')
 def training():
-    return render_template('construction.html', title='Training')
+    return render_template('training.html', title='Training')
 
 
 @app.route('/about')

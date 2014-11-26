@@ -135,9 +135,9 @@ def charge_card(purchase_hash):
     msg = render_template('ticketing/pickup.eml', 
         purchase=purchase,
         url=app.config['SITE_ADDRESS'])
-    print msg
-    #smtp = smtplib.SMTP('localhost')
-    #smtp.sendmail('no-reply@circlecitycon.com', [purchase.email], msg)
+    #print msg
+    smtp = smtplib.SMTP('localhost')
+    smtp.sendmail('no-reply@circlecitycon.com', [purchase.email], msg)
 
     # Lastly tell the user that the purchase is complete and to check their
     # email for the ticket codes.

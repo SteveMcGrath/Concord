@@ -11,8 +11,8 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_PATH, 'database.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_PATH, 'db_repository')
 
 # Conference Settings
-CONFERENCE_NAME = 'CircleCityCon'
-CONFERENCE_EVENT = 'CircleCityCon 2015'
+CONFERENCE_NAME = 'SuperAwesomeCon'
+CONFERENCE_EVENT = 'SuperAwesomeCon 1.0'
 SITE_ADDRESS = 'http://localhost:5000'
 
 # Ticket Prices
@@ -74,5 +74,5 @@ TICKETS = {
 }
 
 # Stripe Settings
-STRIPE_SKEY = 'sk_test_qKLodOUxdOL8WD7c1bbhzAg8'
-STRIPE_PKEY = 'pk_test_SJuozYInifyEDMPZZ9RFLASE'
+STRIPE_SKEY = 'sk_test_TESTKEY'
+STRIPE_PKEY = 'pk_test_TESTKEY'

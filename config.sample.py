@@ -13,7 +13,8 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_PATH, 'db_repository')
 # Conference Settings
 CONFERENCE_NAME = 'SuperAwesomeCon'
 CONFERENCE_EVENT = 'SuperAwesomeCon 1.0'
-SITE_ADDRESS = 'http://localhost:5000'
+SITE_ADDRESS = 'http://superawesomecon.com'
+EMAIL_ADDRESS = 'no-reply@superawesomecon.com'
 
 # Ticket Prices
 TICKETS = {

@@ -46,4 +46,5 @@ def about():
 
 @app.route('/cft')
 def cft():
-    return render_template('cft/cft.html', title='Call for Training')
+    return redirect(url_for('training'))
+#    return render_template('cft/cft.html', title='Call for Training')

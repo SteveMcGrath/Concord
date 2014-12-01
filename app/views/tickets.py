@@ -65,7 +65,7 @@ def purchase_tickets():
             # we will be overriding the price and the ticket type associated
             # with this purchase.
             code = DiscountCode.query.filter_by(code=form.discountcode.data).first()
-            if code is None and code.uses < 1:
+            if code is None or code.uses < 1:
                 flash('Invalid or Expired Discount Code')
             else:
                 purchase.price = code.price

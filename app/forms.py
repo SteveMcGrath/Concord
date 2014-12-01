@@ -35,9 +35,9 @@ class LoginForm(Form):
 
 class PurchaseForm(Form):
     email = EmailField('Email Address', validators=[Required()])
-    ticket_type = SelectField('Ticket Type', choices=gen_tickets(), validators=[Required()])
+    ticket_type = SelectField('Ticket Type', choices=gen_tickets(), validators=[Required()], default='earlybird')
     discountcode = TextField('Discount Code', validators=[Optional()])
-    children = SelectField('Number of Children under 14?', choices=(
+    children = SelectField('Number of Children under 16?', choices=(
         ('0', 'No Child'),
         ('1', '1 Child'),
         ('2', '2 Children'),

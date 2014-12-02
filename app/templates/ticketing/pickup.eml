@@ -1,11 +1,11 @@
-From: CircleCityCon Ticketing <no-reply@circlecitycon.com>
+From: {{ con_name }} Ticketing <{{ reply_email }}>
 To: {{ purchase.email }}
-Subject: CircleCityCon Ticket Redemption Code
+Subject: {{ con_name }} Ticket Redemption Code
 
-Below is the link to your CircleCityCon Ticket(s).  If you have any questions, please feel free to contact us at ticketing@circlecitycon.com
+Below is the link to your {{ con_name }} Ticket(s).  If you have any questions, please feel free to contact us at {{ ticketing_email }}
 
-https://circlecitycon.com/tickets/pickup/{{ purchase.ref_hash }}
+{{ url }}/tickets/pickup/{{ purchase.ref_hash }}
 
 Thanks, and see you at the conference!
 
-CircleCityCon Staff
+{{ con_name }} Staff

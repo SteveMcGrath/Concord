@@ -43,6 +43,7 @@ class Purchase(db.Model):
     payment_token = db.Column(db.Text)
     children = db.Column(db.Integer)
     completed = db.Column(db.Boolean, default=False)
+    date = db.Column(db.DateTime, default=datetime.now())
     tickets = db.relationship('Ticket', backref='purchase')
 
     def __init__(self):
@@ -54,6 +55,7 @@ class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ticket_type = db.Column(db.Text)
     purchase_id = db.Column(db.Integer, db.ForeignKey('purchases.id'))
+    date = db.Column(db.DateTime, default=datetime.now())
     ticket_hash = db.Column(db.Text)
     user_id = db.Column(db.Integer, default=None)
     redeemed = db.Column(db.Boolean, default=False)

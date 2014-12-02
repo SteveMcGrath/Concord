@@ -9,6 +9,11 @@ from app.views.login import *
 from app.views.tickets import *
 from app.views.cfp import *
 
+@app.before_request
+def before_request():
+    g.user = current_user
+    g.con_name = app.config['CONFERENCE_NAME']
+
 @app.route('/')
 def home():
     return render_template('home.html', title='Home')

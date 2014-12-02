@@ -8,11 +8,6 @@ def load_user(userid):
     return User.query.filter_by(id=int(userid)).first()
 
 
-@app.before_request
-def before_request():
-    g.user = current_user
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if g.user.is_authenticated():

@@ -81,3 +81,6 @@ TICKETS = {
 # Stripe Settings
 STRIPE_SKEY = 'sk_test_TESTKEY'
 STRIPE_PKEY = 'pk_test_TESTKEY'
+
+# Google Analytics
+GOOGLE_ANALYTICS = 'UA-XXXXXXXX-1'

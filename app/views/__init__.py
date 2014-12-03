@@ -13,6 +13,7 @@ from app.views.cfp import *
 def before_request():
     g.user = current_user
     g.con_name = app.config['CONFERENCE_NAME']
+    g.google_analytics = app.config['GOOGLE_ANALYTICS']
 
 @app.route('/')
 def home():

@@ -12,8 +12,16 @@
 			body {
 				padding-top: 60px;
 				padding-bottom: 40px;
+				visibility: hidden;
 			}
 		</style>
+		<noscript>
+			<style>
+				body {
+					visibility: visible;
+				}
+			</style>
+		</noscript>
 		<link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap-responsive.min.css') }}" />
 		<link rel="stylesheet" href="{{ url_for('.static', filename='css/style.css') }}" />
 
@@ -29,7 +37,7 @@
 		<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 		<link rel="shortcut icon" href="../assets/ico/favicon.png">
 	</head>
-	<body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+	<body data-spy="scroll" data-target=".bs-docs-sidebar">
 		<div id="wrap">
 			<div class="navbar navbar-inverse navbar-fixed-top">
 				<div class="navbar-inner">

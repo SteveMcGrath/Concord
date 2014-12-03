@@ -29,8 +29,13 @@ body {
 }
 
 #footer .pull-right a {
-  padding-right: 5px;
+  padding-right: 10px;
   padding-left: 5px;
   text-decoration: none;
   color: #000;
+}
+
+#footer .pull-right a:hover {
+  color: #000;
+  background-color: #bbb;
 }

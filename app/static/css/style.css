@@ -27,3 +27,10 @@ body {
     padding-right: 20px;
   }
 }
+
+#footer .pull-right a {
+  padding-right: 5px;
+  padding-left: 5px;
+  text-decoration: none;
+  color: #000;
+}

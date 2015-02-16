@@ -37,7 +37,8 @@ def training():
 
 @app.route('/talks')
 def talks():
-    return render_template('schedule/talks.html', title='Talks List')
+    #return render_template('schedule/talks.html', title='Talks List')
+    return render_template('construction.html', title='Talks List')
 
 
 @app.route('/sponsors')

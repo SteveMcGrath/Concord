@@ -30,9 +30,14 @@ def speaker_bios():
     return render_template('schedule/bios.html', title='Speaker Bios')
 
 
-@app.route('/schedule/training')
-def training_schedule():
-    return render_template('schedule/training.html', title='Training Schedule')
+@app.route('/training')
+def training():
+    return render_template('schedule/training.html', title='Training List')
+
+
+@app.route('/talks')
+def talks():
+    return render_template('schedule/talks.html', title='Talks List')
 
 
 @app.route('/sponsors')
@@ -50,11 +55,6 @@ def events():
     return render_template('events.html', title='Events')
 
 
-@app.route('/training')
-def training():
-    return render_template('training.html', title='Training')
-
-
 @app.route('/about')
 def about():
     return render_template('construction.html', title='About Us')
@@ -62,5 +62,4 @@ def about():
 
 @app.route('/cft')
 def cft():
-    return redirect(url_for('training'))
-#    return render_template('cft/cft.html', title='Call for Training')
+    return render_template('cft/cft.html', title='Call for Training')

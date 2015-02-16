@@ -56,8 +56,11 @@
 									<ul class="dropdown-menu" role="menu">
 										<li {% if request.path == url_for('schedule') %}class="active"{% endif %}><a href="{{ url_for('schedule') }}">Conference Schedule</a></li>
 										<li {% if request.path == url_for('events') %}class="active"{% endif %}><a href="{{ url_for('events') }}">Events</a></li>
+										<li {% if request.path == url_for('talks') %}class="active"{% endif %}><a href="{{ url_for('talks') }}">Talks</a></li>
 										<li {% if request.path == url_for('training') %}class="active"{% endif %}><a href="{{ url_for('training') }}">Training</a></li>
+										<li {% if request.path == url_for('speaker_bios') %}class="active"{% endif %}><a href="{{ url_for('speaker_bios') }}">Bios</a></li>
 										<li {% if request.path == url_for('cfp') %}class="active"{% endif %}><a href="{{ url_for('cfp') }}">CFP</a></li>
+										<li {% if request.path == url_for('cft') %}class="active"{% endif %}><a href="{{ url_for('cft') }}">CFT</a></li>
 										</ul>
 									</li>
 								<li {% if request.path == url_for('sponsors') %}class="active"{% endif %}><a href="{{ url_for('sponsors') }}">Sponsors</a></li>

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block inner_content %}
+<div class="row">
+	<div class="span9">
+		<ul><h4>General Ticket Stats</h4>
+			<li>Total Tickets : <strong>{{ t_total }}</strong></li>
+			<li>New Tickets in the last 7 Days : <strong>{{ t_new }}</strong></li>
+		</ul>
+		<ul><h4>Ticket Type Breakdown</h4>
+			{% for group in t_types %}
+			<li>{{ group[0]|capitalize }} Tickets : <strong>{{ group[1] }}</strong></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+{% endblock %}

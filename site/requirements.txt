@@ -1,0 +1,20 @@
+Flask
+Flask-Babel
+Flask-Login
+Flask-Mail
+Flask-Migrate
+Flask-Script
+Flask-SQLAlchemy
+Flask-WTF
+SQLAlchemy
+sqlalchemy-migrate
+WTForms
+markdown
+qrcode
+stripe
+alembic
+Pillow
+
+# Enable these for production...
+#gunicorn
+#MySQL-python

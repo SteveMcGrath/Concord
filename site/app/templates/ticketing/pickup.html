@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block inner_content %}
+<ul>
+{% for ticket in purchase.tickets %}
+	<li><a class="btn" href="{% if ticket.redeemed %}/tickets/print/{{ ticket.ticket_hash }}{% else %}/tickets/info/{{ ticket.ticket_hash }}{% endif %}">Ticket ({{ ticket.ticket_type }}::{% if ticket.name == None %}{{ ticket.ticket_hash }}{% else %}{{ ticket.name }}{% endif %})</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

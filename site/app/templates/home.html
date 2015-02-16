@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% block inner_content %}
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="hero-unit">
+	<div class="row">
+		<div class="span4" style="text-align:center;overflow:hidden">
+			<pre style="background-color: #0aa;color: #FFF;white-space:pre;word-break:normal;word-wrap:normal">
+
+        `-////:-         
+    -smds+//+oyddo.     
+  :dd/`         .omy.   
+ oN/              `sN:  
+/M:                 sN. 
+dd                  `Mo 
+mh                   Ms 
+sN`                 /M: 
+`dd`     .---`     -Ns  
+ `yN+` +mdssymd: .sN+   
+   -smdMs````.hMdmo`    
+      hMshhhhysMy       
+      yM      `s/       
+     -dM:::::::::.      
+     yMssssssssyM+      
+     yM Circle -M+      
+     yM City   -M+      
+     yM Con    -M+      
+     yM        :M+      
+     ohhhhhhhhhhh:      
+			</pre>
+		</div>
+		<div class="span7">
+			<h1>README.txt</h1>
+			<p>
+				CircleCityCon is a security conference held in downtown Indianapolis. 
+				Our inaugural con last year was a big success and we are only looking
+				to grow and make it better.  
+			</p>
+			<p>
+				CircleCityCon is about the community. Our signature offering is the 
+				community led training classes offered to all participants. Events and 
+				contests are organized by members of the security community, including 
+				both CircleCityCon staffers and community partners.  Two tracks, 
+				incredible entertainment, and technical villages help round out the 
+				CircleCityCom experience. Of course, don't forget the chance to meet 
+				and talk with your peers about all topics including security, hacking, 
+				and the latest superhero movie.
+			</p>
+			<p>We hope to see you there!</p>
+			<p>As we grow in the coming months we will have lots of surprises.</p>
+			<!-- <p><a href="#" class="btn btn-primary btn-large">Learn more</a></p> -->
+		</div>
+	</div>
+</div>
+
+<!-- Example row of columns -->
+<div class="row">
+	<div class="span6">
+		<h2>INFO.TXT</h2>
+		<p><strong>WHEN : </strong>06-12-2015 - 06-14-2015</p>
+		<p><strong>WHERE : </strong><a class="btn" href="{{ url_for('location') }}">The Westin Indianapolis</a></p>
+		<p><strong>CFP OPEN : </strong><a class="btn" href="{{ url_for('cfp') }}">Open</a></p>
+		<p><strong>CFT OPEN : </strong><a class="btn" href="{{ url_for('cft') }}">Open</a></p>
+		<p><strong>TICKETS ON SALE : </strong><a class="btn" href="{{ url_for('tickets') }}">Purchase</a></p>
+		<p><strong>TRAINING REG : </strong><a class="btn" href="{{ url_for('training') }}">March 2015</a></p>
+	</div>
+	<div class="span5">
+		<h2>WELCOME.TXT</h2>
+		<p>
+			CircleCityCon returns for another glorious year!  As you can see, we decided on a retro 
+			theme this year.  Some throwbacks.  Nostalgia.  From badges to events to talks to training, 
+			we'll showcase a mix of the old and the new in downtown Indianapolis this summer, 
+			June 12-14, 2015!
+		</p>
+		{# <p><a class="btn" href="#">View details</a></p> #}
+	</div>
+</div>
+{% endblock %}

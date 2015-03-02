@@ -2,10 +2,10 @@ from datetime import date
 from flask.ext.wtf import Form
 from flask.ext.wtf.html5 import *
 from wtforms.fields import *
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import Required, Optional, Email
 from sqlalchemy import desc, or_, and_
-from app.models import Ticket, User
+from app.models import Ticket, User, Seat
 from app import app
 
 
@@ -16,15 +16,38 @@ def open_training():
     ))
 
 
+def open_classes():
+    sel_list = ()
+    #for training in app.config['CLASSES']:
+    #    c = app.config['CLASSES'][training]
+    #    seats = Seat.query.filter_by(tag=c['id']).filter_by(paid=True).count()
+    #    if seats < training['seats']:
+    #        sel_list = sel_list + ((training, '%s ($%s USD)' % (c['name'], c['price'])))
+    return sel_list
+
+
 def gen_tickets():
     sel_list = ()
-    tickets = app.config['TICKETS']
-    for ticket in tickets:
-        c = tickets[ticket]
-        if c['visible']:
-            if c['expiration'] is None or date.today() < c['expiration']:
-                sel_list = sel_list + ((ticket, '%s ($%s USD)' % (c['name'], c['price'])),)
+    #tickets = app.config['TICKETS']
+    #for ticket in tickets:
+    #    c = tickets[ticket]
+    #    if c['visible']:
+    #        if c['expiration'] is None or date.today() < c['expiration']:
+    #            sel_list = sel_list + ((ticket, '%s ($%s USD)' % (c['name'], c['price'])),)
     return sel_list
+
+
+def training_options():
+    sel_list = ()
+    #for tclass in Training.query().filter_by(accepted=True).all():
+    #    sel_list = sel_list + ((tclass.id, '%s ($%s USD)' % (tclass.name, tclass.price)))
+    return sel_list
+
+
+class TrainingPurchaseForm(Form):
+    training = SelectMultipleField('Training Options', choices=open_classes(),
+                validators=[Required()])
+    submit = SubmitField('Purchase')
 
 
 class LoginForm(Form):
@@ -84,3 +107,12 @@ class TicketInfoForm(Form):
     ), validators=[Optional()])
     marketing = BooleanField('Would you like to be contacted from our sponsors?', default=True)
     submit = SubmitField('Submit Questionare')
+
+
+class NewsForm(Form):
+    title = TextField('Title', validators=[Required()])
+    draft = BooleanField('Draft Post')
+    body_md = TextAreaField('Post Body', validators=[Required()])
+    submit = SubmitField('Add/Update')
+
+

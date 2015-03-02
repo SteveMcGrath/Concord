@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, abort, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import User, Ticket, Purchase, DiscountCode
+from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase
 from sqlalchemy import desc
 from datetime import date
 import stripe
@@ -85,7 +85,10 @@ def purchase_tickets():
 
 @app.route('/tickets/charge/<purchase_hash>', methods=['POST'])
 def charge_card(purchase_hash):
-    purchase = Purchase.query.filter_by(ref_hash=purchase_hash).first_or_404()
+    purchase = Purchase.query.filter_by(ref_hash=purchase_hash).first()
+    if purchase == None:
+        flash('There was an error with your transaction', 'danger')
+        return redirect(url_for('purchase_tickets'))
 
     if purchase.price > 0:
         # Now we will actually charge the card.  Based off of how the stripe
@@ -97,11 +100,16 @@ def charge_card(purchase_hash):
             card=purchase.payment_token
         )
 
+        if purchase.purchase_type == 'ticket':
+            description = 'CircleCityCon %s Ticket' % purchase.ticket_type
+        elif purchase.purchase_type == 'training':
+            description = 'CircleCityCon Training'
+
         charge = stripe.Charge.create(
             customer=customer.id,
             amount=int(purchase.price * 100),  #Stripe Expects the payment in cents.
             currency='usd',
-            description='CircleCityCon %s Ticket' % purchase.ticket_type
+            description=description
         )
     else:
         purchase.payment_type = 'comp'
@@ -109,7 +117,7 @@ def charge_card(purchase_hash):
 
     # Now to update the payment object with the payment information, append
     # the ticket codes to the purchase, and then to mark the payment as done.
-    if purchase.ticket_type == 'family':
+    if purchase.ticket_type in ['family', 'attendee_x2']:
         purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee'))
         purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee'))
     else:
@@ -163,8 +171,6 @@ def ticket_pickup(purchase_hash):
 def ticket_information(ticket_id):
     ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
     form = forms.TicketInfoForm()
-    print form.validate_on_submit()
-    print form.validate()
     if form.validate_on_submit():
         form.populate_obj(ticket)
         ticket.redeemed = True
@@ -181,3 +187,51 @@ def ticket_print(ticket_id):
     '''
     ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
     return ticket.generate(app.config['CONFERENCE_EVENT'])
+
+
+@app.route('/tickets/get_training/<ticket_id>', methods=['GET', 'POST'])
+def purchase_training(ticket_id):
+    ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
+    form = forms.TrainingPurchaseForm()
+    if form.validate_on_submit():
+        purchase = TrainingPurchase()
+        purchase.ticket_id = ticket.id
+        for item in form.classes.data:
+            seat = Seat()
+            seat.ticket_id = ticket.id
+            seat.name = app.config['CLASSES'][item]['name']
+            seat.tag = app.config['CLASSES'][item]['id']
+            seat.sub = app.config['CLASSES'][item]['sub']
+            purchase.price += app.config['CLASSES'][item]['price']
+            purchase.classes.append(seat)
+        db.sesson.add(purchase)
+        db.session.commit()
+        return render_template('ticketing/training_confirm.html',
+            purchase=purchase,
+            title='Purchase Confirmation',
+            stripe_key=app.config['STRIPE_PKEY'])
+    return render_template('ticketing/training_purchase.html',
+        form=form,
+        title='Training Purchase')
+
+
+@app.route('/tickets/training/charge/<purchase_hash>', methods=['POST'])
+def charge_training():
+    purchase = TrainingPurchase.query.filter_by(ref_hash=purchase_hash).first_or_404()
+    purchase.payment_type = 'stripe'
+    purchase.payment_token = request.form['stripeToken']
+    customer = stripe.Customer.create(email=purchase.ticket.email,card=purchase.payment_token)
+    charge = stripe.Charge.create(customer=customer.id, 
+        amount=int(purchase.price * 100),
+        currency='usd',
+        description='CircleCityCon Training'
+    )
+    for item in purchase.classes:
+        item.paid = True
+        db.session.merge(item)
+    purchase.completed = True
+    db.session.merge(purchase)
+    db.session.commit()
+    return render_template('tickets/training_completed.html',
+            purchase=purchase,
+            title='Training Purchased')

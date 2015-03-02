@@ -1,13 +1,14 @@
 from flask import render_template, flash, redirect, session, url_for, abort, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import User, Ticket
+from app.models import User, Ticket, Post
 from sqlalchemy import desc
 from datetime import datetime
 
-from app.views.login import *
+from app.views.admin import *
 from app.views.tickets import *
 from app.views.cfp import *
+from app.views.statistics import *
 
 @app.before_request
 def before_request():
@@ -63,3 +64,31 @@ def about():
 @app.route('/cft')
 def cft():
     return render_template('cft/cft.html', title='Call for Training')
+
+
+@app.route('/news')
+def news():
+    posts = Post.query.all()
+    return render_template('news.html', title='Conference News', posts=posts)
+
+
+@app.route('/news/edit/<int:post_id>', methods=['GET', 'POST'])
+@app.route('/news/new', methods=['GET', 'POST'])
+@login_required
+def news_edit(post_id=None):
+    if post_id is not None:
+        post = Post.query.filter_by(id=post_id).first_or_404()
+    else:
+        post = Post()
+    form = forms.NewsForm(obj=post)
+    flash(form.errors)
+    if form.validate_on_submit():
+        form.populate_obj(post)
+        if post_id is not None:
+            db.session.merge(post)
+        else:
+            db.session.add(post)
+        db.session.commit()
+        flash('Post Submitted!', 'success')
+        return redirect(url_for('news'))
+    return render_template('news_edit.html', form=form, title='Edit News Article')

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block inner_content %}
+{{ super() }}
+<div class="container">
+	<form method="POST">
+	{{ form.hidden_tag() }}
+	<ul>
+		<li>{{ form.title.label }} {{ form.title() }}</li>
+		<li>{{ form.draft.label }} {{ form.draft() }}</li>
+		<li>{{ form.body_md.label }} {{ form.body_md() }}</li>
+		<li>{{ form.submit() }}</li>
+	</ul>
+	</form>
+</div>
+{% endblock %}

@@ -22,10 +22,43 @@ ticket_purchases = db.Table('ticket_purchases',
     db.Column('tickets_id', db.Integer, db.ForeignKey('tickets.id'))
 )
 
-training_seats = db.Table('training_seats',
-    db.Column('ticket_id', db.Integer, db.ForeignKey('tickets.id')),
-    db.Column('training_id', db.Integer, db.ForeignKey('training.id'))
-)
+#training_seats = db.Table('training_seats',
+#    db.Column('ticket_id', db.Integer, db.ForeignKey('tickets.id')),
+#    db.Column('training_id', db.Integer, db.ForeignKey('training.id'))
+#)
+
+#trainers = db.Table('trainers', 
+#    db.Column('training_id', db.Integer, db.ForeignKey('training.id')),
+#    db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
+#)
+#
+#speakers = db.Table('speakers',
+#    db.Column('talk_id', db.Integer, db.ForeignKey('talks.id')),
+#    db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
+#)
+
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    body_md = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    draft = db.Column(db.Boolean, default=True)
+    author = db.relationship('User', backref='posts')
+
+    @hybrid_property
+    def body(self):
+        return markdown.markdown(self.body_md)
+
+
+class TicketTypes(db.Model):
+    __tablename__ = 'ticket_types'
+    id = db.Column(db.Integer, primary_key=True)
+    price = db.Column(db.Integer, default=150)
+    name = db.Column(db.Text)
+    limit = db.Column(db.Integer, default=500)
+
 
 class DiscountCode(db.Model):
     __tablename__ = 'discountcodes'
@@ -43,6 +76,7 @@ class Purchase(db.Model):
     email = db.Column(db.Text)
     price = db.Column(db.Integer)
     ticket_type = db.Column(db.Text)
+    purchase_type = db.Column(db.Text, default='ticket')
     discountcode = db.Column(db.Text)
     payment_type = db.Column(db.Text)
     payment_token = db.Column(db.Text)
@@ -113,6 +147,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255))
     admin = db.Column(db.Boolean, default=False)
     bio = db.Column(db.Text, default='Currently no Bio')
+
     tickets = db.relationship(Ticket, backref='user',
         primaryjoin='User.id==Ticket.user_id',
         foreign_keys=[Ticket.__table__.c.user_id],
@@ -145,11 +180,28 @@ class User(db.Model, UserMixin):
         ticket.user_id = self.id
 
 
-class Training(db.Model):
-    __tablename__ = 'training'
+class TrainingPurchase(db.Model):
+    __tablename__ = 'train_purchases'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True)
-    summary = db.Column(db.Text)
-    date = db.Column(db.DateTime)
-    seats = db.Column(db.Integer)
-#    tickets = 
+    ref_hash = db.Column(db.Text)
+    price = db.Column(db.Integer)
+    payment_type = db.Column(db.Text)
+    payment_token = db.Column(db.Text)
+    completed = db.Column(db.Boolean, default=False)
+    date = db.Column(db.DateTime, default=datetime.now())
+
+    def __init__(self):
+        self.ref_hash = gen_hash(str(time()), str(random()))
+
+
+class Seat(db.Model):
+    __tablename__ = 'seats'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    tag = db.Column(db.Text)
+    sub = db.Column(db.Text)
+    paid = db.Column(db.Boolean, default=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'))
+    purchase_id = db.Column(db.Integer, db.ForeignKey('train_purchases.id'))
+    ticket = db.relationship('Ticket', backref='classes')
+    purchase = db.relationship('TrainingPurchase', backref='classes')

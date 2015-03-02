@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% set title = 'News' %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	{% for post in posts %}
+	{% if not post.draft %}
+	<div class="well">
+		<legend>{{ post.title }}{% if g.user.is_authenticated() %}<a class="btn pull-right" href="{{ url_for('news_edit', post.id) }}">Edit Post</a>{% endif %}</legend>
+		{{ post.body|safe }}
+	</div>
+	{% endif %}
+	{% endfor %}
+</div>
+{% endblock %}

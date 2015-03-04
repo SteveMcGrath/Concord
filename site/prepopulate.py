@@ -1,6 +1,6 @@
 from hashlib import md5
 from time import time
-from app.models import User, Submission, Ticket
+from app.models import User
 from app import db
 
 def genpw(username):

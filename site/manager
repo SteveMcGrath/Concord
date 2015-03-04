@@ -18,7 +18,7 @@ def export(filename='tickets.json'):
         count += 1
         print '[*] Exported %s/%s/%s' % (ticket.name, ticket.email, ticket.ticket_hash)
     with open(filename, 'wb') as rawfile:
-        tickets = json.load(rawfile)
+        rawfile.write(json.dump(data))
     print 'Exported %s Tickets' % count
 
 if __name__ == '__main__':

@@ -1,5 +1,25 @@
 #!/usr/bin/env python
 from app import manager
+from app import db, manager
+from app.models import Ticket
+import json
+
+@manager.command
+def export(filename='tickets.json'):
+    count = 0
+    data = []
+    for ticket in Ticket.query.all():
+        data.append({
+            'type': ticket.ticket_type,
+            'hash': ticket.ticket_hash,
+            'email': ticket.email,
+            'name': ticket.name
+        })
+        count += 1
+        print '[*] Exported %s/%s/%s' % (ticket.name, ticket.email, ticket.ticket_hash)
+    with open(filename, 'wb') as rawfile:
+        tickets = json.load(rawfile)
+    print 'Exported %s Tickets' % count
 
 if __name__ == '__main__':
     manager.run()

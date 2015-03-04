@@ -9,10 +9,18 @@
 <p>
   Thank you
 </p>
-<p>CIrcleCityCon Staff</p>
+<p>CircleCityCon Staff</p>
 <ul>
 {% for ticket in purchase.tickets %}
-        <li><a class="btn" href="{% if ticket.redeemed %}/tickets/print/{{ ticket.ticket_hash }}{% else %}/tickets/info/{{ ticket.ticket_hash }}{% endif %}">Ticket ({{ ticket.ticket_type }}::{% if ticket.name == None %}{{ ticket.ticket_hash }}{% else %}{{ ticket.name }}{% endif %})</a></li>
+        <li>
+        	<a class="btn" 
+        	   href="{% if ticket.redeemed %}/tickets/print/{{ ticket.ticket_hash }}{% else %}/tickets/info/{{ ticket.ticket_hash }}{% endif %}">
+        	   		Ticket ({{ ticket.ticket_type }}::{% if ticket.name == None %}{{ ticket.ticket_hash }}{% else %}{{ ticket.name }}{% endif %})
+        	</a> 
+        	<a class="btn" href="{{ url_for('purchase_training', ticket=ticket.ticket_hash) }}">Select Training</a>
+        	< br />
+        {# {% for item in ticket.classes %} #}
+        </li>
 {% endfor %}
 </ul>
 {% endblock %}

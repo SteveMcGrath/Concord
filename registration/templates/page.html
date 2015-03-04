@@ -1,0 +1,25 @@
+{% block content %}
+{% if messages -%} {# don't output anything if there are no messages #}
+
+<!-- begin message block -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+	{% for cat, msg in messages %}
+		<div class="alert alert-{{cat}}" role="alert">{{msg|safe}}</div>
+	{% endfor -%}
+    </div>
+  </div>
+</div>
+<!-- end message block -->
+
+{% endif -%}
+<script type="text/javascript">
+	function close_window() {
+	  if (confirm("Close Window?")) {
+	    close();
+	  }
+	}
+</script>
+<a href="btn btn-primary" href="javascript:close_window()">Close</a>
+{% endblock %}

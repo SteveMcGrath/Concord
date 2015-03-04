@@ -1,5 +1,23 @@
 #!/usr/bin/env python
-from app import manager
+from app import db, manager, Ticket
+import json
+
+@manager.command
+def tickets(filename='tickets.json'):
+    count = 0
+    with open(filename) as rawfile:
+        tickets = json.load(rawfile)
+    for ticket in tickets:
+        entry = Ticket()
+        entry.ticket_type = ticket['type']
+        entry.ticket_hash = ticket['hash']
+        entry.email = ticket['email']
+        entry.name = ticket['name']
+        db.session.add(entry)
+        count += 1
+        print '[*] Added %s/%s/%s' % (ticket['name'], ticket['email'], ticket['hash'])
+    db.session.commit()
+    print 'Imported %s Tickets' % count
 
 if __name__ == '__main__':
     manager.run()

@@ -1,0 +1,11 @@
+From: {{ g.settings['CONFERENCE_NAME'] }} <{{ g.settings['REPLY_EMAIL'] }}>
+To: {{ user.email }}
+Subject: Welcome to the {{ g.settings['CONFERENCE_NAME'] }} Website!
+
+Welcome to the {{ g.settings['CONFERENCE_NAME'] }} website.  This site intends to cover all of your conference needs, however, before we begin, you will need to click the link below to activate your account and set your password.
+
+{{ g.settings['URL'] }}/user/forgot/{{ user.forgot }}
+
+Regards,
+
+{{ g.settings['CONFERENCE_NAME'] }} Staff

@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	<div class="row">
+		<ul class="nav nav-tabs">
+			<li role="presentation" 
+				{% if request.path == url_for('user', userid=g.user.id) %}class="active"{% endif %}>
+				<a href="{{ url_for('user', userid=g.user.id) }}">Profile</a>
+			</li>
+			<li role="presentation" 
+				{% if request.past == url_for('submission_list', userid=g.user.id) %}class="active"{% endif %}>
+				<a href="{{ url_for('submission_list', userid=g.user.id) }}">Submissions</a>
+			</li>
+			{% if g.talkround is not None %}
+			<li role="presentation" 
+				{% if request.past == url_for('submit_talk') %}class="active"{% endif %}>
+				<a href="{{ url_for('submit_talk') }}">Submit Talk</a>
+			</li>
+			{% endif %}
+			{% if g.classround is not None %}
+			<li role="presentation" 
+				{% if request.past == url_for('submit_class') %}class="active"{% endif %}>
+				<a href="{{ url_for('submit_class') }}">Submit Class</a>
+			</li>
+			{% endif %}
+		</ul>
+	</div>		
+	{% block content_tab %}{% endblock %}
+</div>
+{% endblock %}

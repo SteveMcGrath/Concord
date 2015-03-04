@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% set title = 'Login Page' %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	<div class="well">
+		{{ wtf.quick_form(form, form_type='horizontal', button_map={'submit_button': 'primary'}) }}
+		<a class="btn" href="{{ url_for('forgot_password') }}">Forgot Password</a>
+		<a class="btn" href="{{ url_for('new_user') }}">Create New User</a>
+	</div>
+</div>
+{% endblock %}

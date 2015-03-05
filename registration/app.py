@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.migrate import Migrate, MigrateCommand
@@ -31,12 +31,12 @@ class Ticket(db.Model):
 def checkin(tickethash):
     ticket = Ticket.query.filter_by(ticket_hash=tickethash).first()
     if ticket is None:
-        flash('No Ticket Found!', 'danger')
-    if ticket.redeemed:
-        flash('Ticket Already Checked In!', 'warning')
+        message, code = ['No Ticket Found!', 'danger']
+    elif ticket.redeemed:
+        message, code = ['Already Checked In!', 'warning']
     else:
         ticket.redeemed = True
         db.session.merge(ticket)
         db.session.commit()
-        flash('Ticket Successfully Checked in!', 'success')
-    return render_template('page.html')
+        message, code = ['Successfully Checked in!', 'success']
+    return render_template('page.html', message=message, code=code, ticket=ticket)

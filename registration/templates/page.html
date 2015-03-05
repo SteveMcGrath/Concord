@@ -1,25 +1,49 @@
-{% block content %}
-{% if messages -%} {# don't output anything if there are no messages #}
+{% extends "bootstrap/base.html" %}
 
-<!-- begin message block -->
+{% block styles %}
+{{ super() }}
+<style>
+#checkin-response {
+	margin-top: 10px;
+	min-height: 75%;
+	text-align: center;
+}
+.glyphicon {
+	font-size: 100px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-	{% for cat, msg in messages %}
-		<div class="alert alert-{{cat}}" role="alert">{{msg|safe}}</div>
-	{% endfor -%}
+		<div id="checkin-response" class="panel panel-{{ code }}">
+			<div class="panel-heading">
+				{% if code == 'success' %}
+				<span class="glyphicon glyphicon-ok-sign"></span>
+				{% elif code == 'warning' %}
+				<span class="glyphicon glyphicon-warning-sign"></span>
+				{% else %}
+				<span class="glyphicon glyphicon-ban-circle"></span>
+				{% endif %}
+			</div>
+			<div class="panel-body">
+				<h2>{{ ticket.ticket_type or '' }}</h2>
+				<p><strong>{{ ticket.name or '' }}</strong></p>
+				<p>{{ ticket.ticket_hash or 'INVALID TICKET' }}</p>
+				<p>{{ ticket.email }}</p>
+				<h1>{{ message|safe }}</h1>
+			</div>
+			<div class="panel-footer">
+				<input type="button" 
+						class="btn btn-primary btn-lg" 
+						role="button" 
+						value="Close"
+						onclick="self.close()" />
+			</div>
+		</div>
     </div>
   </div>
 </div>
-<!-- end message block -->
-
-{% endif -%}
-<script type="text/javascript">
-	function close_window() {
-	  if (confirm("Close Window?")) {
-	    close();
-	  }
-	}
-</script>
-<a href="btn btn-primary" href="javascript:close_window()">Close</a>
 {% endblock %}

@@ -9,31 +9,25 @@ from app.models import Ticket, User, Seat
 from app import app
 
 
-def open_training():
-    return Submission.query.filter(and_(
-        Submission.training == True,
-        len(Submission.tickets) < Submission.seats
-    ))
-
-
 def open_classes():
     sel_list = ()
-    #for training in app.config['CLASSES']:
-    #    c = app.config['CLASSES'][training]
-    #    seats = Seat.query.filter_by(tag=c['id']).filter_by(paid=True).count()
-    #    if seats < training['seats']:
-    #        sel_list = sel_list + ((training, '%s ($%s USD)' % (c['name'], c['price'])))
+    for training in app.config['CLASSES']:
+        c = app.config['CLASSES'][training]
+        seats = Seat.query.filter_by(tag=c['id']).filter_by(paid=True).count()
+        print c['name'], seats, c['seats'], seats < c['seats']
+        if seats < c['seats']:
+            sel_list = sel_list + ((training, '%s ($%s USD)' % (c['name'], c['price'])),)
     return sel_list
 
 
 def gen_tickets():
     sel_list = ()
-    #tickets = app.config['TICKETS']
-    #for ticket in tickets:
-    #    c = tickets[ticket]
-    #    if c['visible']:
-    #        if c['expiration'] is None or date.today() < c['expiration']:
-    #            sel_list = sel_list + ((ticket, '%s ($%s USD)' % (c['name'], c['price'])),)
+    tickets = app.config['TICKETS']
+    for ticket in tickets:
+        c = tickets[ticket]
+        if c['visible']:
+            if c['expiration'] is None or date.today() < c['expiration']:
+                sel_list = sel_list + ((ticket, '%s ($%s USD)' % (c['name'], c['price'])),)
     return sel_list
 
 

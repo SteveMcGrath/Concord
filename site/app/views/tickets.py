@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, abort, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase
+from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase, Seat
 from sqlalchemy import desc
 from datetime import date
 import stripe
@@ -196,7 +196,8 @@ def purchase_training(ticket_id):
     if form.validate_on_submit():
         purchase = TrainingPurchase()
         purchase.ticket_id = ticket.id
-        for item in form.classes.data:
+        purchase.price = 0
+        for item in form.training.data:
             seat = Seat()
             seat.ticket_id = ticket.id
             seat.name = app.config['CLASSES'][item]['name']
@@ -204,7 +205,7 @@ def purchase_training(ticket_id):
             seat.sub = app.config['CLASSES'][item]['sub']
             purchase.price += app.config['CLASSES'][item]['price']
             purchase.classes.append(seat)
-        db.sesson.add(purchase)
+        db.session.add(purchase)
         db.session.commit()
         return render_template('ticketing/training_confirm.html',
             purchase=purchase,
@@ -216,7 +217,7 @@ def purchase_training(ticket_id):
 
 
 @app.route('/tickets/training/charge/<purchase_hash>', methods=['POST'])
-def charge_training():
+def charge_training(purchase_hash):
     purchase = TrainingPurchase.query.filter_by(ref_hash=purchase_hash).first_or_404()
     purchase.payment_type = 'stripe'
     purchase.payment_token = request.form['stripeToken']
@@ -232,6 +233,6 @@ def charge_training():
     purchase.completed = True
     db.session.merge(purchase)
     db.session.commit()
-    return render_template('tickets/training_completed.html',
+    return render_template('ticketing/training_completed.html',
             purchase=purchase,
             title='Training Purchased')

@@ -183,12 +183,14 @@ class User(db.Model, UserMixin):
 class TrainingPurchase(db.Model):
     __tablename__ = 'train_purchases'
     id = db.Column(db.Integer, primary_key=True)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'))
     ref_hash = db.Column(db.Text)
     price = db.Column(db.Integer)
     payment_type = db.Column(db.Text)
     payment_token = db.Column(db.Text)
     completed = db.Column(db.Boolean, default=False)
     date = db.Column(db.DateTime, default=datetime.now())
+    ticket = db.relationship('Ticket')
 
     def __init__(self):
         self.ref_hash = gen_hash(str(time()), str(random()))

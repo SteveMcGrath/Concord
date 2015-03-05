@@ -15,6 +15,7 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_PATH, 'db_repository')
 # Conference Settings
 CONFERENCE_NAME = 'SuperAwesomeCon'
 CONFERENCE_EVENT = 'SuperAwesomeCon 1.0'
+SITE_ADDRESS = 'http://localhost:5000'
 
 # Email Settings
 REPLY_EMAIL = 'no-reply@superawesomecon.com'
@@ -78,9 +79,26 @@ TICKETS = {
     },
 }
 
+CLASSES = {
+    'testclass_sat': {
+        'name': 'The Test Class',
+        'id': 'testclass1',
+        'sub': 'na',
+        'price': 30,
+        'seats': 10
+    },
+    'testclass_fri': {
+        'name': 'The Second Test Class',
+        'id': 'testclass2',
+        'sub': 'na',
+        'price': 30,
+        'seats': 5
+    }
+}
+
 # Stripe Settings
-STRIPE_SKEY = 'sk_test_TESTKEY'
-STRIPE_PKEY = 'pk_test_TESTKEY'
+STRIPE_SKEY = 'sk_test_pChMS7yzh00lggjuTwUYZDmg'
+STRIPE_PKEY = 'pk_test_iyxpR2FbMJK819SWK1VmhNc5'
 
 # Google Analytics
 GOOGLE_ANALYTICS = 'UA-XXXXXXXX-1'

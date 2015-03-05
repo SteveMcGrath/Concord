@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block inner_content %}
+<div id="purchase-form" class="container">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		<ul>
+			<li>{{ form.training.label }} {{ form.training() }}</li>
+			<li>{{ form.submit() }}</li>
+		</ul>
+	</form>
+</div>
+{% endblock %}

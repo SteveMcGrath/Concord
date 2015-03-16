@@ -2,3 +2,4 @@
 .DS_Store
 database.db
 config.py
+site/migrations

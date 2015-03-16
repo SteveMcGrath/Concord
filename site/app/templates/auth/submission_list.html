@@ -1,0 +1,50 @@
+{% extends "auth/profile.html" %}
+{% set title = '%s Submission List' % user.email %}
+
+{% block content_tab %}
+{{ super() }}
+
+<!-- Submitted Talks -->
+<div class="container">
+	<legend><h4>Submitted Talks</h4></legend>
+	{% if not user.speaking %}
+	<p style="text-align: center;">No Submitted Talks</p>
+	<br />
+	{% endif %}
+	{% for talk in user.speaking %}
+	<div class="panel panel-{{ talk.html_status }}">
+		<div class="panel-heading">{{ talk.title }}</div>
+		<div class="panel-body">
+			<ul>Speakers
+				{% for speaker in talk.speakers %}
+				<li>{{ speaker.name }}</li>
+				{% endfor %}
+			</ul>
+			{{ talk.summary|safe }}
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+<!-- Submitted Classes -->
+<div class="container">
+	<legend><h4>Submitted Classes</h4></legend>
+	{% if not user.training %}
+	<p style="text-align: center;">No Submitted Classes</p>
+	<br />
+	{% endif %}
+	{% for class in user.training %}
+	<div class="panel panel-{{ class.html_status }}">
+		<div class="panel-heading">{{ class.title }}</div>
+		<div class="panel-body">
+			<ul>Speakers
+				{% for trainer in class.trainers %}
+				<li>{{ trainer.name }}</li>
+				{% endfor %}
+			</ul>
+			{{ class.summary|safe }}
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

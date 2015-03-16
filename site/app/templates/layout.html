@@ -90,6 +90,9 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if g.user.is_authenticated() %}
+                {% if g.user.admin %}
+                <li><a href="{{ url_for('settings') }}">Settings</a></li>
+                {% endif %}
                 <li><a href="{{ url_for('user', userid=g.user.id) }}">Profile</a></li>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% else %}

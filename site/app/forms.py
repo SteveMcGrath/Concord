@@ -83,3 +83,13 @@ class CFPCommentsForm(Form):
     ), default='info')
     submit = SubmitField('Add Comment')
 
+
+class SettingForm(Form):
+    name = TextField('Name', validators=[Required()])
+    value = TextField('Value', validators=[Required()])
+
+
+class SettingsListForm(Form):
+    settings = FieldList(FormField(SettingForm))
+    submit = SubmitField('Update Settings')
+

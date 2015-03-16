@@ -52,7 +52,7 @@ class User(db.Model, UserMixin):
 
 
 class Category(db.Model):
-    __tablename__ = 'catergories'
+    __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True)
 
@@ -121,14 +121,18 @@ class Submission(db.Model):
     submission_type = db.Column(db.String(32), nullable=False)
     under_review = db.Column(db.Boolean, default=False)
     title = db.Column(db.String(255))
-    summary = db.Column(db.Text)
+    summary_md = db.Column(db.Text)
     start = db.Column(db.DateTime)
     accepted = db.Column(db.Boolean, default=False)
     rejected = db.Column(db.Boolean, default=False)
     length = db.Column(db.Integer, default=60)    
-    comments = db.relationship('SubComments', backref='submission')
-    reviews = db.relationship('SubReview', backref='submission')
-     __mapper_args__ = {'polymorphic_on': submission_type}
+    comments = db.relationship('Comment', backref='submission')
+    reviews = db.relationship('Review', backref='submission')
+    __mapper_args__ = {'polymorphic_on': submission_type}
+
+    @hybrid_property
+    def summary(self):
+        return markdown.markdown(self.summary_md)
 
     @hybrid_property
     def score(self):
@@ -139,8 +143,15 @@ class Submission(db.Model):
             count += 1
         return float(avg)/count
 
+    @hybrid_property
+    def html_status(self):
+        if accepted: return 'success'
+        if rejected: return 'danger'
+        if under_review: return 'warning'
+        return 'info'
 
-class Comments(db.Model):
+
+class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey('submissions.id'))
@@ -170,9 +181,28 @@ class Class(Submission):
     seats = db.relationship('User', secondary=seats, backref='classes')
 
 
-class Talk(ScheduleItem):
+class Talk(Submission):
     __tablename__ = 'talks'
     __mapper_args__ = {'polymorphic_identity': 'talk'}
     id = db.Column(db.Integer, db.ForeignKey('submissions.id'), primary_key=True)
     speakers = db.relationship('User', secondary=speakers, backref='speaking')
+
+
+class Questionnaire(db.Model):
+    __tablename__ = 'questionnaires'
+    id = db.Column(db.Integer, primary_key=True)
+    class_type = db.Column(db.String(5))
+    __mapper_args__ = {'polymorphic_on': class_type}
+
+
+class TalkQuestionnaire(Questionnaire):
+    __tablename__ = 'talk_questionnaires'
+    __mapper_args__ = {'polymorphic_identity': 'talk'}
+    id = db.Column(db.Integer, db.ForeignKey('questionnaires.id'), primary_key=True)
+
+
+class ClassQuestionnaire(Questionnaire):
+    __tablename__ = 'class_questionnaires'
+    __mapper_args__ = {'polymorphic_identity': 'class'}
+    id = db.Column(db.Integer, db.ForeignKey('questionnaires.id'), primary_key=True)
 

@@ -1,7 +1,7 @@
 from flask import render_template, flash, request, redirect, session, url_for, abort, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import Setting, User, Post, Class, Talk
+from app.models import Setting, User, Post, Class, Talk, Round
 from sqlalchemy import desc
 from utils import send_email
 from datetime import datetime
@@ -17,10 +17,10 @@ def load_user(userid):
 def before_request():
     g.user = current_user
     g.settings = app.config
-    g.talkround = CFPRound.query.filter_by(started=True)\
+    g.talkround = Round.query.filter_by(started=True)\
                                 .filter_by(closed=False)\
                                 .filter_by(accept_talks=True).first()
-    g.classround = CFPRound.query.filter_by(started=True)\
+    g.classround = Round.query.filter_by(started=True)\
                                  .filter_by(closed=False)\
                                  .filter_by(accept_classes=True).first() 
 
@@ -113,6 +113,39 @@ def new_user():
     return render_template('form.html', form=form, title='Create a New User')
 
 
+@app.route('/settings')
+@login_required
+def settings():
+    if not g.user.admin:
+        flash('Not Authorized to View Settings', 'warning')
+        return redirect(url_for('user', userid=g.user.id))
+    settings = Setting.query.all()
+    return render_template('admin/settings.html', settings=settings)
+
+
+@app.route('/settings/<name>', methods=['GET', 'POST'])
+@login_required
+def setting_update(name):
+    new = False
+    if not g.user.admin:
+        flash('Not Authorized to Edit Settings', 'warning')
+        return redirect(url_for('user', userid=g.user.id))
+    setting = Setting.query.filter_by(name=name).first()
+    if not setting:
+        new = True
+        setting = Setting(name=name)
+    form = forms.SettingForm(obj=setting)
+    if form.validate_on_submit():
+        form.populate_obj(setting)
+        if new:
+            db.session.add(setting)
+        else:
+            db.session.merge(setting)
+        db.session.commit()
+        return redirect(url_for('settings'))
+    return render_template('form.html', form=form)
+
+
 @app.route('/news')
 def news():
     posts = Post.query.all()
@@ -144,7 +177,12 @@ def news_edit(post_id=None):
 @app.route('/submissions/list/<int:userid>')
 @login_required
 def submission_list(userid):
-    pass
+    if g.user.admin or g.user.id == userid:
+        user = User.query.filter_by(id=userid).first_or_404()
+    else:
+        flash('Not Authorized to View Other User Profiles', 'warning')
+        return redirect(url_for('user', userid=g.user.id))
+    return render_template('auth/submission_list.html', user=user)
 
 
 @app.route('/cfp/submit/talk')

@@ -4,7 +4,7 @@
 	<form method="POST">
 		{{ form.hidden_tag() }}
 		<ul>
-			<li>{{ form.training.label }} {{ form.training() }}</li>
+			<li>{{ form.training.label }} {{ form.training(style="width: 100%;height: 50%;") }}</li>
 			<li>{{ form.submit() }}</li>
 		</ul>
 	</form>

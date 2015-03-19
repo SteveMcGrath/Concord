@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	{% if post.id > -1 %}
+	<div class="well">
+		<legend>{{ post.title }}</legend>
+		{{ post.body|safe }}
+	</div>
+	{% endif %}
+	<div class="well">
+		{{ utils.render(form, form_type='horizontal', button_map={'submit_button': 'primary'}) }}
+		{% if post.id > -1 and post.draft %}
+		<a href="{{ url_for('news_remove', post_id=post.id) }}" class="btn btn-danger">REMOVE</a>
+		{% elif post.id > -1 %}
+		<p>To remove this post, please first convert it into a draft post.</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

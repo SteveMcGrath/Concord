@@ -1,3 +1,4 @@
+{% import "bootstrap/wtf.html" as wtf %}
 {% macro flashed_messages(messages=None, container=True) -%}
 {% with messages = messages or get_flashed_messages(with_categories=True) -%}
 {% if messages -%} {# don't output anything if there are no messages #}
@@ -30,4 +31,69 @@
 
 {% macro form_button(url, content, method='post', class='btn-link') -%}
 <form style="display: inline;" action='{{url}}' method='{{method}}'><button class="{{class|safe}}">{{content}}</button></form>
+{%- endmacro %}
+
+{% macro _hz_form_wrap(horizontal_columns, form_type, add_group=False, required=False) %}
+{% if form_type == "horizontal" %}
+  {% if add_group %}<div class="form-group{% if required %} required{% endif %}">{% endif %}
+  <div class="col-{{horizontal_columns[0]}}-offset-{{horizontal_columns[1]}}
+              col-{{horizontal_columns[0]}}-{{horizontal_columns[2]}}
+             ">
+{% endif %}
+{{caller()}}
+
+{% if form_type == "horizontal" %}
+  {% if add_group %}</div>{% endif %}
+  </div>
+{% endif %}
+{% endmacro %}
+
+
+{% macro nav_item(func, name) -%}
+  <li {% if request.path == url_for(func, **kwargs) %}
+      class="active"
+      {% endif %}>
+      <a href="{{ url_for(func, **kwargs) }}">{{ name }}</a>
+  </li>
+{% endmacro %}
+
+{% macro render(form,
+                action="",
+                method="post",
+                extra_classes=None,
+                role="form",
+                form_type="basic",
+                horizontal_columns=('lg', 2, 10),
+                enctype=None,
+                button_map={},
+                id="") %}
+<form
+  {%- if action %} action="{{action}}"{% endif -%}
+  {%- if id %} id="{{id}}"{% endif -%}
+  {%- if method %} method="{{method}}"{% endif %}
+  class="form
+    {%- if extra_classes %} {{extra_classes}}{% endif -%}
+    {%- if form_type == "horizontal" %} form-horizontal
+    {%- elif form_type == "inline" %} form-inline
+    {%- endif -%}
+  "
+  {%- if enctype %} enctype="{{enctype}}"{% endif -%}
+  {%- if role %} role="{{role}}"{% endif -%}
+  >
+  {{ form.hidden_tag() }}
+  {{ wtf.form_errors(form, hiddens='only') }}
+
+  {%- for field in form %}
+    {% if not bootstrap_is_hidden_field(field) -%}
+      {{ wtf.form_field(field,
+                    form_type=form_type,
+                    horizontal_columns=horizontal_columns,
+                    button_map=button_map) }}
+    {%- endif %}
+  {%- endfor %}
+  {% call _hz_form_wrap(horizontal_columns, form_type, True, required=required) %}
+  <input type="submit" class="btn btn-{{ button_map.get('submit_button', 'default') }}" value="{{ button_map.get('submit_value', 'Submit') }}" />
+  {% endcall %}
+
+</form>
 {%- endmacro %}

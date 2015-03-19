@@ -1,10 +1,11 @@
 from flask import render_template, flash, request, redirect, session, url_for, abort, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, login_manager, forms
-from app.models import Setting, User, Post, Class, Talk, Round
+from app import app, db, login_manager, forms, mail
+from app.models import *
 from sqlalchemy import desc
 from utils import send_email
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 login_manager.login_view = 'login'
 
@@ -17,12 +18,10 @@ def load_user(userid):
 def before_request():
     g.user = current_user
     g.settings = app.config
-    g.talkround = Round.query.filter_by(started=True)\
-                                .filter_by(closed=False)\
-                                .filter_by(accept_talks=True).first()
-    g.classround = Round.query.filter_by(started=True)\
-                                 .filter_by(closed=False)\
-                                 .filter_by(accept_classes=True).first() 
+    g.talkround = Round.query.filter_by(status='open')\
+                             .filter(Round.max_talks > 0).first()
+    g.classround = Round.query.filter_by(status='open')\
+                              .filter(Round.max_classes > 0).first() 
 
 
 @app.route('/')
@@ -81,7 +80,7 @@ def forgot_password():
             user.forgot_password()
             db.session.merge(user)
             db.session.commit()
-            send_email('auth/forgot_password.eml', user=user)
+            send_email('auth/forgot_password.eml', 'Password Recovery', user)
     return render_template('form.html', form=form, title='Forgot Password')
 
 
@@ -107,9 +106,13 @@ def new_user():
         user = User()
         form.populate_obj(user)
         user.forgot_password()
-        db.session.add(user)
-        db.session.commit()
-        send_email('auth/new_user.eml', user=user)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            send_email('auth/new_user.eml', 'New User Verification', user)
+        except IntegrityError:
+            flash('User Already Exists, sending a password reset email...')
+            send_email('auth/forgot_password.eml', 'Password Recovery', user)
     return render_template('form.html', form=form, title='Create a New User')
 
 
@@ -147,12 +150,16 @@ def setting_update(name):
 
 
 @app.route('/news')
-def news():
-    posts = Post.query.all()
+@app.route('/news/category/view/<int:category_id>')
+def news(category_id=None):
+    if category_id:
+        posts = Post.query.filter_by(category_id=category_id).all()
+    else:
+        posts = Post.query.all()
     return render_template('news.html', posts=posts)
 
 
-@app.route('/news/edit/<int:article_id>', methods=['GET', 'POST'])
+@app.route('/news/edit/<int:post_id>', methods=['GET', 'POST'])
 @app.route('/news/new', methods=['GET', 'POST'])
 @login_required
 def news_edit(post_id=None):
@@ -163,7 +170,7 @@ def news_edit(post_id=None):
         post = Post.query.filter_by(id=post_id).first_or_404()
     else:
         post = Post()
-    form = forms.NewsForm(obj=post)
+    form = forms.PostForm(obj=post)
     if form.validate_on_submit():
         form.populate_obj(post)
         if post_id is not None:
@@ -171,7 +178,20 @@ def news_edit(post_id=None):
         else:
             db.session.add(post)
         db.session.commit()
-    return render_template('form.html', form=form, title='Edit New Article')
+        return redirect(url_for('news_edit', post_id=post.id))
+    return render_template('admin/post_edit.html', form=form, title='Edit News Article', post=post)
+
+
+@app.route('/news/remove/<int:post_id>')
+@login_required
+def news_remove(post_id):
+    if not g.user.author:
+        flash('Not Authorized to Remove News Articles', 'warning')
+        return redirect(url_for('home'))
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    db.session.delete(post)
+    db.session.commit()
+    return redirect(url_for('news'))
 
 
 @app.route('/submissions/list/<int:userid>')
@@ -185,10 +205,87 @@ def submission_list(userid):
     return render_template('auth/submission_list.html', user=user)
 
 
-@app.route('/cfp/submit/talk')
+@app.route('/cfp/submit/talk/details', methods=['GET', 'POST'])
+@app.route('/cfp/submit/talk/details/<int:talk_id>', methods=['GET', 'POST'])
 @login_required
-def submit_talk():
-    pass
+def submit_talk_details(talk_id=None):
+    if talk_id:
+        talk = Talk.query.filter_by(id=talk_id)
+    else:
+        talk = Talk()
+        talk.speakers.append(g.user)
+    if not g.user.admin or g.user not in talk.speakers:
+        flash('You do not have permission to modify this talk.', 'warning')
+        return redirect(url_for('home'))
+    form = forms.TalkForm(obj=talk)
+    if form.validate_on_submit():
+        form.populate_obj(talk)
+        if talk_id:
+            db.session.merge(talk)
+        else:
+            db.session.add(talk)
+        db.session.commit()
+        return redirect(url_for('submit_talk_speakers', talk_id=talk.id))
+    return render_template('ctp/submit_talk_details.html', talk=talk, form=form)
+
+
+@app.route('/cfp/submit/talk/speakers/<int:talk_id>', methods=['GET', 'POST'])
+@login_required
+def submit_talk_speakers(talk_id):
+    talk = Talk.query.filter_by(id=talk_id).first_or_404()
+    form = forms.TalkSpeakerForm()
+    if not g.user.admin or g.user not in talk.speakers:
+        flash('You do not have permission to modify this talk.', 'warning')
+        return redirect(url_for('home'))
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            user = User()
+            form.populate_obj(user)
+            db.session.add(user)
+        talk.speakers.append(user)
+        db.session.merge(talk)
+        db.session.commit()
+    return render_template('cfp/submit_talk_speakers.html', talk=talk, form=form)
+
+
+@app.route('/cfp/submit/talk/speakers/<int:talk_id>/remove/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def submit_talk_remove_speaker(talk_id, user_id):
+    talk = Talk.query.filter_by(id=talk_id).first_or_404()
+    user = User.query.filter_by(id=user_id).first_or_404()
+    form = forms.RemoveSpeakerForm()
+    if not g.user.admin or g.user not in talk.speakers:
+        flash('You do not have permission to modify this talk.', 'warning')
+        return redirect(url_for('home'))
+    if g.user == user:
+        flash('You cannot remove yourself from a talk.', 'warning')
+        return redirect(url_for('submit_talk_speakers', talk_id=talk.id))
+    if form.validate_on_submit():
+        if form.email.data == user.email:
+            talk.speakers.remove(user)
+            flash('%s Removed from Talk' % user.email, 'success')
+        else:
+            flash('%s Was not Removed' % user.email, 'warning')
+        return redirect(url_for('submit_talk_speakers', talk_id=talk.id))
+    return render_template('cfp/submit_talk_remove_speaker.html', user=user, talk=talk, form=form)
+
+
+@app.route('/cfp/submit/talk/review/<int:talk_id>', methods=['GET', 'POST'])
+@login_required
+def submit_talk_review(talk_id):
+    talk = Talk.query.filter_by(id=talk_id).first_or_404()
+    if not g.user.admin or g.user not in talk.speakers:
+        flash('You do not have permission to modify this talk.', 'warning')
+        return redirect(url_for('home'))
+    if request.method == 'POST':
+        talk.status = 'submitted'
+        talk.submitted = datetime.now()
+        db.session.merge(talk)
+        db.session.commit()
+        return redirect(url_for('submission_list'), userid=g.user.id)
+    return render_template('cfp/submit_talk_review.html', talk=talk)
+
 
 
 @app.route('/cfp/submit/class')

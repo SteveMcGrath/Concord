@@ -35,23 +35,13 @@
                 {# 
                 <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">Conference Info<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li {% if request.path == url_for('talks') %}class="active"{% endif %}>
-                            <a href="{{ url_for('talks') }}">Talks</a>
-                        </li>
-                        <li {% if request.path == url_for('training') %}class="active"{% endif %}>
-                            <a href="{{ url_for('training') }}">Training</a>
-                        </li>
-                        <li {% if request.path == url_for('events') %}class="active"{% endif %}>
-                            <a href="{{ url_for('events') }}">Events</a>
-                        </li>
+                        {{ utils.nav_item('talks', 'Talks') }}
+                        {{ utils.nav_item('training', 'Training') }}
+                        {{ utils.nav_item('events', 'Events') }}
                         <li role="presentation" class="divider"></li>
-                        <li {% if request.path == url_for('schedule') %}class="active"{% endif %}>
-                            <a href="{{ url_for('schedule') }}">Schedule</a>
-                        </li>
+                        {{ utils.nav_item('schedule', 'Schedule') }}
                         {% if g.user.is_authenticated() %}
-                        <li {% if request.path == url_for('schedule_custom') %}class="active"{% endif %}>
-                            <a href="{{ url_for('schedule_custom') }}">Custom Schedule</a>
-                        </li>
+                        {{ utils.nav_item('schedule_custom', 'Custom Schedule') }}
                         {% endif %}
                     </ul>
                 </li>
@@ -72,20 +62,21 @@
                 #}
 
                 <!-- News Menu/News Link -->
-                {% if g.user.is_authenticated() and g.user.author %}
                 <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">News<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li {% if request.path == url_for('news') %}class="active"{% endif %}>
-                            <a href="{{ url_for('news') }}">News Listing</a>
-                        </li>
+                        {{ utils.nav_item('news', 'All News') }}
+                        {% for category in g.settings['POST_CATEGORIES'] %}
+                        {{ utils.nav_item('news', category[1], category_id=category[0]) }}
+                        {% endfor %}
+                        {% if g.user.is_authenticated() and g.user.author %}
                         <li role="presentation" class="divider"></li>
-                        <li {% if request.path == url_for('news_edit') %}class="active"{% endif %}>
-                            <a href="{{ url_for('news_edit') }}">New Article</a>
-                        </li>
+                        {{ utils.nav_item('news_edit', 'New Article') }}
+                        <li role="presentation" class="divider"></li>
+                        {{ utils.nav_item('category_edit', 'New Category') }}
                     </ul>
                 </li>
                 {% else %}
-                <li {% if request.path == url_for('news') %}class="active"{% endif %}><a href="{{ url_for('news') }}">News</a></li>
+                {{ utils.nav_item('news', 'News') }}
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">

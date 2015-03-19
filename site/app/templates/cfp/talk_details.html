@@ -1,0 +1,73 @@
+<div class="container">
+	<div class="well">
+		<legend>
+			{{ talk.title }}
+			<span class="label label-{{ talk.html_status }}">{{ talk.status|capitalize }}</span>
+		</legend>
+		<table class="table table-hover">
+			{% if talk.status in ['accepted', 'rejected', 'alternate', 'post review'] %}
+			<tr>
+				<td><strong>Speakers</strong></td>
+				<td>
+					<div class="list-group">
+					{% for speaker in talk.speakers %}
+						<a class="list-group-item" href="#">
+							<h5 class="list-group-item-heading">{{ speaker.name }}</h5>
+							<p class="list-group-item-text">{{ speaker.email }}</p>
+						</a>
+					{% endfor %}
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td><strong>Score</strong></td>
+				<td>{{ talk.score }}</td>
+			</tr>
+			{% endif %}
+			{% if talk.status is not 'draft' %}
+			<tr>
+				<td><strong>Submitted Date</strong></td>
+				<td>{{ talk.submitted }}</td>
+			</tr>
+			{% endif %}
+				<td><strong>Round</strong></td>
+				<td>{{ talk.round.id }}</td>
+			</tr>
+			<tr>
+				<td><strong>Topic</strong></td>
+				<td>{{ talk.topic_pretty }}</td>
+			</tr>
+			{% if talk.status == 'accepted' %}
+			<tr>
+				<td><strong>Start Time</strong></td>
+				<td>{{ talk.start }}</td>
+			</tr>
+			{% endif %}
+			<tr>
+				<td><strong>Length</strong></td>
+				<td>{{ talk.length }} Minutes</td>
+			</tr>
+			<tr>
+				<td><strong>Summary</strong></td>
+				<td>{{ talk.summary }}</td>
+			</tr>
+			{% if g.user in talk.speakers or g.user.reviewer %}
+			<tr>
+				<td><strong>Outline</strong></td>
+				<td>{{ talk.outline }}</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="container">
+	{% for comment in talk.comments %}
+	{% if comment.pulic or g.user.reviewer %}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				{{ comment.text }}
+			</div>
+		</div>
+	{% endif %}
+	{% endfor %}
+	</div>
+</div>

@@ -3,6 +3,6 @@
 {% block content_tab %}
 {{ super() }}
 <div class="well">
-	{{ wtf.quick_form(form, form_type='horizontal', button_map={'submit_button': 'primary'}) }}
+	{{ utils.render(form, form_type='horizontal', button_map={'submit_button': 'primary'}) }}
 </div>
 {% endblock %}

@@ -1,95 +1,114 @@
 from datetime import date
 from flask.ext.wtf import Form
+from wtforms_alchemy import model_form_factory, ModelForm, ModelFieldList, ModelFormField
 from flask.ext.wtf.html5 import *
 from wtforms.fields import *
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import Required, Optional, Email
-from sqlalchemy import desc, or_, and_
-from app import app
+from app import app, db
+from app.models import *
+
+
+BaseModelForm = model_form_factory(Form)
+
+def get_categories():
+    return Category.query
+
+
+class ModelForm(BaseModelForm):
+    @classmethod
+    def get_session(self):
+        return db.session
 
 
 class LoginForm(Form):
     email = EmailField('Email', validators=[Required(), Email()])
     password = PasswordField('Password', validators=[Required()])
-    submit = SubmitField('Login')
 
 
 class ForgotPasswordForm(Form):
     email = EmailField('Email', validators=[Required(), Email()])
-    submit = SubmitField('Reset Password')
 
 
 class NewUserForm(Form):
     email = EmailField('Email', validators=[Required(), Email()])
-    submit = SubmitField('Create User')
 
 
 class PasswordRecoveryForm(Form):
     passwd = PasswordField('Password', validators=[Required()])
     verify = PasswordField('Verify Password', validators=[Required()])
-    submit = SubmitField('Reset Password')
 
 
-class UserForm(Form):
-    email = EmailField('Email Address', validators=[Required(), Email()])
-    admin = BooleanField('Administrative Priviledge')
-    author = BooleanField('News Posting Priviledge')
-    reviewer = BooleanField('CFP Reviewing Priviledge')
-    char = BooleanField('CFP Chair Priviledge')
-    bio_md = TextAreaField('Biography', description='Markdown Text')
-    submit = SubmitField('Update User')
+class SettingForm(ModelForm):
+    class Meta:
+        model = Setting
 
 
-class NewsForm(Form):
-    title = TextField('Title', validators=[Required()])
-    draft = BooleanField('Draft Post')
-    body_md = TextAreaField('Post Body', validators=[Required()])
-    submit = SubmitField('Add/Update')
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        exclude = ['password', 'forgot']
+        field_args = {'email': {'validators': [Email()]}}
 
 
-class CFPRoundForm(Form):
-    start_date = DateTimeField('When to Open the Round Automatically?', validators=[Required()])
-    stop_date = DateTimeField('When to Close the Round Automaticaly?', validators=[Required()])
-    started = BooleanField('Has the CFP Round Started?')
-    closed = BooleanField('Has the CFP Round Ended?')
-    accept_classes = BooleanField('Are we accepting Training Classes?')
-    accept_talks = BooleanField('Are We Accepting Talks?')
-    submit = SubmitField('Add/Update Round')
+class CFPUserForm(ModelForm):
+    class Meta:
+        model = User
+        include = ['email', 'name', 'bio_md']
+        field_args = {
+            'email': {'validators': [Email(), Required()]},
+            'name': {'validators': [Required()]},
+        }
 
 
-class CFPAddSpeakerForm(Form):
-    email = EmailField('Email Address', validators=[Required(), Email()])
-    name = TextField('Name/Handle', validators=[Required()])
-    bio_md = TextAreaField('Biography', validators=[Required()])
-    submit = SubmitField('Add Speaker')
+class CategoryForm(ModelForm):
+    class Meta:
+        model = Category
 
 
-class CFPTalkQuestionnaireForm(Form):
-    pass
+class PostForm(ModelForm):
+    class Meta:
+        model = Post
+    category = QuerySelectField('Category', query_factory=get_categories, get_label='name')
 
 
-class CFPClassQuestionnaireForm(Form):
-    pass
+class RoundForm(ModelForm):
+    class Meta:
+        model = Round
 
 
-class CFPCommentsForm(Form):
-    text_md = TextAreaField('Comment')
-    public = BooleanField('Should the Submitter see this comment?')
-    status = SelectField('Status', choices=(
-        ('info', 'Informational'),
-        ('warning', 'Warning'),
-        ('danger', 'Issue'),
-        ('success', 'Approval')
-    ), default='info')
-    submit = SubmitField('Add Comment')
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
 
 
-class SettingForm(Form):
-    name = TextField('Name', validators=[Required()])
-    value = TextField('Value', validators=[Required()])
+class ClassForm(ModelForm):
+    class Meta:
+        model = Class
+        exclude = ['status', 'start']
+        field_args = {'length': {
+            'choices': app.config['CLASS_LENGTHS'], 
+            'label': 'Length of class (in hours)'
+        }}
 
 
-class SettingsListForm(Form):
-    settings = FieldList(FormField(SettingForm))
-    submit = SubmitField('Update Settings')
+class TalkForm(ModelForm):
+    class Meta:
+        model = Talk
+        exclude = ['status', 'start']
+        field_args = {'length': {
+            'choices': app.config['TALK_LENGTHS'],
+            'label': 'Length of Talk (in minutes)'
+        }}
+
+
+class TalkSubForm(ModelForm):
+    class Meta:
+        model = TalkQuestionnaire
+
+
+class ClassSubForm(ModelForm):
+    class Meta:
+        model = ClassQuestionnaire
+
 

@@ -7,6 +7,8 @@ CFP_TOPICS = (
     ('blueteam', 'Blue Team'),
     ('purpleteam', 'Purple Team'),
 )
+CFP_ACCEPT = 4
+CFP_DENY = 2
 
 # Global Settings
 CONFERENCE_NAME = 'SuperAwesomeCon'

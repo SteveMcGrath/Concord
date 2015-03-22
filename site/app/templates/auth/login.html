@@ -4,9 +4,9 @@
 {{ super() }}
 <div class="container">
 	<div class="well">
-		{{ utils.render(form, form_type='horizontal', button_map={'submit_button': 'primary'}) }}
-		<a class="btn" href="{{ url_for('forgot_password') }}">Forgot Password</a>
-		<a class="btn" href="{{ url_for('new_user') }}">Create New User</a>
+		{{ utils.render(form, form_type='horizontal', button_map={'submit_button': 'primary', 'submit_value': 'Login'}) }}
+		<a class="btn btn-warning" href="{{ url_for('forgot_password') }}">Forgot Password</a>
+		<a class="btn btn-success" href="{{ url_for('new_user') }}">Create New User</a>
 	</div>
 </div>
 {% endblock %}

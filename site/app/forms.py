@@ -61,15 +61,9 @@ class CFPUserForm(ModelForm):
         }
 
 
-class CategoryForm(ModelForm):
-    class Meta:
-        model = Category
-
-
 class PostForm(ModelForm):
     class Meta:
         model = Post
-    category = QuerySelectField('Category', query_factory=get_categories, get_label='name')
 
 
 class RoundForm(ModelForm):
@@ -80,6 +74,21 @@ class RoundForm(ModelForm):
 class CommentForm(ModelForm):
     class Meta:
         model = Comment
+
+
+class DiscountCodeForm(ModelForm):
+    class Meta:
+        model = DiscountCode
+
+
+class TicketForm(ModelForm):
+    class Meta:
+        model = Ticket
+
+
+class TicketTypeForm(ModelForm):
+    class Meta:
+        model = TicketType
 
 
 class ClassForm(ModelForm):
@@ -102,13 +111,16 @@ class TalkForm(ModelForm):
         }}
 
 
-class TalkSubForm(ModelForm):
-    class Meta:
-        model = TalkQuestionnaire
+class TalkSPeakerForm(Form):
+    email = EmailField('Email Address', validators=[Required()])
+    name = TextField('Speaker Name', validators=[Required()])
+    bio_md = TextAreaField ('Speaker Bio', validators=[Required()])
 
 
-class ClassSubForm(ModelForm):
-    class Meta:
-        model = ClassQuestionnaire
+class RemoveSpeakerForm(Form):
+    email = EmailField('Speaker\'s Email', validators=[Required()])
+
+
+
 
 

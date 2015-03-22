@@ -32,35 +32,6 @@
         </div>
         <div id="navbar-main" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                {# 
-                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">Conference Info<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        {{ utils.nav_item('talks', 'Talks') }}
-                        {{ utils.nav_item('training', 'Training') }}
-                        {{ utils.nav_item('events', 'Events') }}
-                        <li role="presentation" class="divider"></li>
-                        {{ utils.nav_item('schedule', 'Schedule') }}
-                        {% if g.user.is_authenticated() %}
-                        {{ utils.nav_item('schedule_custom', 'Custom Schedule') }}
-                        {% endif %}
-                    </ul>
-                </li>
-                #}
-                {#
-                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">Tickets<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li {% if request.path == url_for('purchasing') %}class="active"{% endif %}>
-                            <a href="{{ url_for('purchasing') }}">Purchase Tickets</a>
-                        </li>
-                    </ul>
-                </li>
-                #}
-                {#
-                <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">CFP<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li {% if request.path == url_for('cfp_home') %}class="active"{% endif %}>
-                #}
-
                 <!-- News Menu/News Link -->
                 <li><a href="#" class="dropdown-toggle" data-toggle="dropdown">News<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -71,23 +42,34 @@
                         {% if g.user.is_authenticated() and g.user.author %}
                         <li role="presentation" class="divider"></li>
                         {{ utils.nav_item('news_edit', 'New Article') }}
-                        <li role="presentation" class="divider"></li>
-                        {{ utils.nav_item('category_edit', 'New Category') }}
+                        {% endif %}
                     </ul>
                 </li>
-                {% else %}
-                {{ utils.nav_item('news', 'News') }}
-                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if g.user.is_authenticated() %}
-                {% if g.user.admin %}
-                <li><a href="{{ url_for('settings') }}">Settings</a></li>
+                {% if g.user.reviewer %}
+                {% if g.reviewround is not None %}
+                {{ utils.nav_item('review_list', 'Reviews <span class="badge">%s</span>' % g.revcount) }}
                 {% endif %}
-                <li><a href="{{ url_for('user', userid=g.user.id) }}">Profile</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% endif %}
+                {% if g.user.elevated %}
+                <ul class="dropdown-menu", role="menu">
+                    {% if g.user.admin %}
+                    {{ utils.nav_item('discounts_list', 'Discount Codes') }}
+                    {{ utils.nav_item('users_list', 'User List') }}
+                    {{ utils.nav_item('ticket_type_list', 'Ticket Types') }}
+                    {{ utils.nav_item('settings', 'Misc Settings') }}
+                    {% endif %}
+                    {% if g.user.chair %}
+                    {{ utils.nav_item('round_list', 'CFP Rounds') }}
+                    {% endif %}
+                </ul>
+                {% endif %}
+                {{ utils.nav_item('user', 'Profile', user_id=g.user.id) }}
+                {{ utils.nav_item('logout', 'Logout') }}
                 {% else %}
-                <li><a href="{{ url_for('login') }}">Login</a></li>
+                {{ utils.nav_item('login', 'Login') }}
                 {% endif %}
             </ul>
         </div>

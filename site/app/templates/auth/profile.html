@@ -6,12 +6,12 @@
 		<div class="col-md-12">
 			<ul class="nav nav-tabs">
 				<li role="presentation" 
-					{% if request.path == url_for('user', userid=g.user.id) %}class="active"{% endif %}>
-					<a href="{{ url_for('user', userid=g.user.id) }}">Profile</a>
+					{% if request.path == url_for('user', user_id=g.user.id) %}class="active"{% endif %}>
+					<a href="{{ url_for('user', user_id=g.user.id) }}">Profile</a>
 				</li>
 				<li role="presentation" 
-					{% if request.past == url_for('submission_list', userid=g.user.id) %}class="active"{% endif %}>
-					<a href="{{ url_for('submission_list', userid=g.user.id) }}">Submissions</a>
+					{% if request.past == url_for('submission_list', user_id=g.user.id) %}class="active"{% endif %}>
+					<a href="{{ url_for('submission_list', user_id=g.user.id) }}">Submissions</a>
 				</li>
 				{% if g.talkround %}
 				<li role="presentation" 

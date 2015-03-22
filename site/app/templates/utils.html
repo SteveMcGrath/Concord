@@ -53,7 +53,7 @@
   <li {% if request.path == url_for(func, **kwargs) %}
       class="active"
       {% endif %}>
-      <a href="{{ url_for(func, **kwargs) }}">{{ name }}</a>
+      <a href="{{ url_for(func, **kwargs) }}">{{ name|safe }}</a>
   </li>
 {% endmacro %}
 

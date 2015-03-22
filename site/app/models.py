@@ -8,6 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import desc
 from StringIO import StringIO
 from flask import render_template
+from random import randint
 import mistune as markdown
 import base64, qrcode, hashlib
 from app.utils import gen_hash, mdcheat
@@ -43,6 +44,10 @@ class User(db.Model, UserMixin):
     @hybrid_property
     def bio(self):
         return markdown.markdown(self.bio_md, escape=True)
+
+    @hybrid_property
+    def elevated(self):
+        return self.admin or self.author or self.reviewer or self.chair
 
     def update_password(self, password):
         self.password = gen_hash(str(self.id), password)
@@ -92,7 +97,7 @@ speakers = db.Table('speakers',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
 )
 
-seats = db.Table('seats',
+user_seats = db.Table('user_seats',
     db.Column('class_id', db.Integer, db.ForeignKey('classes.id')),
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
 )
@@ -101,7 +106,7 @@ seats = db.Table('seats',
 class Round(db.Model):
     __tablename__ = 'rounds'
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String('10'), default='pending', info={
+    status = db.Column(db.String(10), default='pending', info={
         'choices': [('pending', 'Pending'), ('open', 'Open'), ('closed', 'Closed')]
     })
     max_talks = db.Column(db.Integer)
@@ -172,6 +177,17 @@ class Submission(db.Model):
         return markdown.markdown(self.outline_md, escape=True)
 
     @hybrid_property
+    def reviewed_by(self):
+        return [r.user for r in self.reviews]
+
+    @hybrid_property
+    def topic_pretty(self):
+        for item in app.config['CFP_TOPICS']:
+            if item[0] == self.topic:
+                return item[1]
+        return self.topic
+
+    @hybrid_property
     def score(self):
         avg = 0
         count = 0
@@ -204,8 +220,10 @@ class Comment(db.Model):
 class Review(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     submission_id = db.Column(db.Integer, db.ForeignKey('submissions.id'))
     score = db.Column(db.Integer)
+    user = db.relationship('User', backref='reviews')
 
 
 class Class(Submission):
@@ -217,7 +235,7 @@ class Class(Submission):
     cost = db.Column(db.Integer, default=0, info={
         'label': 'Is there a cost associated with this training (per seat)?'
     })
-    seats = db.relationship('User', secondary=seats, backref='classes')
+    seats = db.relationship('User', secondary=user_seats, backref='classes')
 
     @hybrid_property
     def open_seats(self):
@@ -229,4 +247,86 @@ class Talk(Submission):
     __mapper_args__ = {'polymorphic_identity': 'talk'}
     id = db.Column(db.Integer, db.ForeignKey('submissions.id'), primary_key=True)
     speakers = db.relationship('User', secondary=speakers, backref='speaking')
+
+
+class TicketType(db.Model):
+    __tablename__ = 'ticket_types'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    sellable = db.Column(db.Boolean, default=False, info={
+        'label': 'Can this ticket type be purchased?'
+    })
+    cost = db.Column(db.Integer, default=0, info={
+        'label': 'How much should this ticket type cost?'
+    })
+    max_per = db.Column(db.Integer, default=0, info={
+        'label': 'Maximum number of this ticket type can a purchaser hold?'
+    })
+    max_tickets = db.Column(db.Integer, default=0, info={
+        'label': 'Maximum number of tickets to be sold of this type',
+        'description': 'Setting this to 0 means unlimited.'
+    })
+    start = db.Column(db.DateTime, info={
+        'label': 'When should ticket sales for this ticket type start?'
+    })
+    end = db.Column(db.DateTime, info={
+        'label': 'When should ticket sales for this ticket type stop?'
+    })
+
+    @hybrid_property
+    def remaining(self):
+        return self.max_tickets - len(self.tickets)
+
+
+ticket_classes = db.Table('ticket_classes',
+    db.Column('ticket_id', db.Integer, db.ForeignKey('tickets.id')),
+    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
+)
+
+
+class Ticket(db.Model):
+    __tablename__ = 'tickets'
+    id = db.Column(db.Integer, primary_key=True)
+    hash = db.Column(db.String(32), unique=True, default=gen_hash(datetime.now().isoformat(), str(randint(0,5000))))
+    type_id = db.Column(db.Integer, db.ForeignKey('ticket_types.id'))
+    cart_id = db.Column(db.Integer, db.ForeignKey('carts.id'))
+    valid = db.Column(db.Boolean, default=False)
+    name = db.Column(db.String(64))
+    type = db.relationship('TicketType', backref='tickets')
+    classes = db.relationship('Class', secondary='ticket_classes', backref='tickets')
+    cart = db.relationship('Cart', backref='tickets')
+
+
+class Discount(db.Model):
+    __tablename__ = 'discounts'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(40))
+    value = db.Column(db.Integer, default=0)
+    ticket_override = db.Column(db.Integer, default=None, info={
+        'label': 'Overload the Ticket Type?'
+    })
+    max_uses = db.Column(db.Integer, default=0, info={
+        'label': 'Maximum Number of Uses'
+    })
+
+    @hybrid_property
+    def remaining(self):
+        return self.max_uses - len(self.carts)
+
+
+cart_classes = db.Table('cart_classes',
+    db.Column('cart_id', db.Integer, db.ForeignKey('carts.id')),
+    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
+)
+
+
+class Cart(db.Model):
+    __tablename__ = 'carts'
+    id = db.Column(db.Integer, primary_key=True)
+    hash = db.Column(db.String(32), default=gen_hash(datetime.now().isoformat(), str(randint(0,5000))))
+    discount_id = db.Column(db.Integer, db.ForeignKey('discounts.id'))
+    classes = db.relationship('Class', secondary=cart_classes)
+
+
+
 

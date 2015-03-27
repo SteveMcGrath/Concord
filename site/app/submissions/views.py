@@ -3,7 +3,7 @@ from flask.ext.login import current_user, login_required
 from app.extensions import db
 from .models import User, Round, Submission
 from .forms import (RoundForm, SubmissionTypeForm, SubmissionForm, SpeakerForm,
-                    WithdrawSubmissionForm, RoundValidateForm)
+                    WithdrawForm, RoundValidationForm)
 
 subs = Blueprint('subs', __name__, template_folder='templates', static_folder=None)
 
@@ -50,7 +50,7 @@ def round_status(round_id):
         if not cfpround:
             flash('Round doesn\t exist', 'danger')
             return redirect(url_for('.round_list'))
-        form = RoundValidateForm()
+        form = RoundValidationForm()
         if form.validate_on_submit():
             if form.validation.data == 'yes':
                 cfpround.status = status
@@ -142,7 +142,7 @@ def submission_speaker_edit(sub_id, speaker_id=None):
 
 @subs.route('/submit/review/<int:id>', methods=['GET', 'POST'])
 def submission_review(sub_id):
-    submission = Submission.query.filter_by(id=sub_id).first():
+    submission = Submission.query.filter_by(id=sub_id).first()
     if not submission or current_user not in submission.speakers:
         flash('Invalid submission id', 'danger')
         return redirect(url_for('user.index'))
@@ -168,7 +168,7 @@ def submission_withdraw(w_type, sub_id):
     if not submission or current_user not in submission.speakers:
         flash('Invalid submission id', 'danger')
         return redirect(url_for('.submission_list'))
-    form = WithdrawSubmissionForm()
+    form = WithdrawForm()
     if form.validate_on_submit():
         if form.email.data == current_user.email:
             if w_type == 'speaker':

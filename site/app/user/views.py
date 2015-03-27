@@ -22,7 +22,6 @@ def profile(user_id):
             form = ProfileForm(obj=user)
             form.shirt.choices = current_app.config.get('SHIRT_SIZES')
             if form.validate_on_submit():
-                #form.populate_obj(user)
                 user.email = form.email.data
                 user.name = form.name.data
                 user.bio = form.bio_md.data

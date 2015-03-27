@@ -21,9 +21,11 @@ def create_app():
     from frontend import frontend
     from auth import auth
     from user import user
+    from submissions import subs
     app.register_blueprint(frontend, url_prefix='/con')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(user, url_prefix='/user')
+    app.register_blueprint(subs, url_prefix='/submissions')
 
     @app.route('/')
     def homepage(): 

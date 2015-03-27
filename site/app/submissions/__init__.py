@@ -1,1 +1,1 @@
-from .views import cfp_round
+from .views import subs

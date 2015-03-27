@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, current_app, fl
 from flask.ext.login import current_user, login_required
 from app.extensions import db
 from .models import User, Round, Submission
-from .forms import RoundForm, SubmissionTypeForm, SubmissionForm, SpeakerForm
+from .forms import (RoundForm, SubmissionTypeForm, SubmissionForm, SpeakerForm,
+                    WithdrawSubmissionForm, RoundValidateForm)
 
 subs = Blueprint('subs', __name__, template_folder='templates', static_folder=None)
 
@@ -24,7 +25,7 @@ def round_edit(round_id=None):
         if round_id:
             cfpround = Round.query.filter_by(id=round_id).first()
             if not cfpround:
-                flash('Round Doesnt Exist', 'danger')
+                flash('Round doesn\'t exist', 'danger')
                 return redirect(url_for('round_list'))
         else:
             cfpround = Round()
@@ -41,12 +42,34 @@ def round_edit(round_id=None):
     return redirect(url_for('frontend.index'))
 
 
+@subs.route('/round/<status>/<int:round_id>', methods=['GET', 'POST'])
+@login_required
+def round_status(round_id):
+    if current_user.has_role('chair') and status in ['open', 'close']:
+        cfpround = Round.query.filter_by(id=round_id).first()
+        if not cfpround:
+            flash('Round doesn\t exist', 'danger')
+            return redirect(url_for('.round_list'))
+        form = RoundValidateForm()
+        if form.validate_on_submit():
+            if form.validation.data == 'yes':
+                cfpround.status = status
+            db.session.commit()
+            flash('Round forcefully opened', 'success')
+            return redirect(url_for('.round_list'))
+        return render_template('round_force.html', form=form, cfpround=cfpround, status=status)
+    flash('Invalid round id or round status', 'danger')
+    return redirect(url_for('.round_list'))
+
+
 @subs.route('/submit/new', methods=['GET', 'POST'])
 @login_required
 def submission_type():
     form = SubmissionTypeForm()
     if form.validate_on_submit():
         submission = Submission()
+        cfpround = Round.query.filter_by(status='open').first()
+        submission.round_id = cfpround.id
         form.populate_obj(submission)
         db.session.add(submission)
         return redirect(url_for('.submission_edit', sub_id=submission.id))
@@ -126,6 +149,8 @@ def submission_review(sub_id):
     form = ReviewForm()
     if form.validate_on_submit():
         submission.status = 'submitted'
+        if len(submission.round.submissions) >= submission.round.max_subs:
+            submission.round.status = 'closed'
         db.session.commit()
         flash('Submission submitted, thank you!', 'success')
         return redirect(url_for('user.index'))
@@ -155,4 +180,4 @@ def submission_withdraw(w_type, sub_id):
             db.session.commit()
             return redirect(url_for('.submission_list'))
         flash('The email entered does not match your own', 'warning')
-    return render_template('submission_withdraw.html', form=form, submission=submission)
+    return render_template('submission_withdraw.html', form=form, submission=submission, w_type=w_type)

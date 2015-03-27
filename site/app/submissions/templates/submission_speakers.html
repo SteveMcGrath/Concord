@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<td>Speaker Name</td>
+				<td>Email</td>
+				<td></td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for speaker in submission.speakers %}
+			<tr>
+				<td>{{ speaker.name }}</td>
+				<td>{{ speaker.email }}</td>
+				<td>
+					<a class="btn btn-primary" 
+						href="{{ url_for('.submission_speaker_edit', sub_id=submission.id, speaker_id=speaker.id) }}">
+							Edit Speaker
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td colspan="3">
+					<a class="btn btn-primary" href="{{ url_for('.submission_speaker_edit', sub_id=submission.id) }}">
+						Add Speaker
+					</a>
+				</td>
+			</tr>
+	</div>
+</div>
+{% endblock %}

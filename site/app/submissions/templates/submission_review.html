@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	<div class="well">
+		<legend>{{ submission.title }}</legend>
+		<ul>
+			<li>Round : {{ submission.round.id }}</li>
+			<li>Type : {{ submission.type }}</li>
+			<li>Topic : {{ submission.topic|capitalize }}</li>
+			<li>Length : {{ submission.length }}</li>
+		</ul>
+		<div class="row">
+			<h5>Abstract</h5>
+			{{ submission.abstract|safe }}
+		</div>
+		<div class="row">
+			<h5>Outline</h5>
+			{{ submission.outline|safe }}
+		</div>
+		<div class="row">
+			<h5>Requests</h5>
+			{{ submission.requests|safe }}
+		</div>
+		<div class="row">
+			<form method="POST">
+				<input type="submit" class="btn btn-primary" value="Complete Submission" />
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

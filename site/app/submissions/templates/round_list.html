@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	{% for cfpround in rounds %}
+	<div class="well">
+		<legend>Round {{ cfpround.id }}</legend>
+		<ul>
+			<li>Status : <span class="cfp-round-{{ cfpround.status }}">{{ cfpround.status }}</span></li>
+			<li>Submissions : {{ cfpround.submissions|count }}</li>
+			<li>Maximum Submissions : {{ cfpround.max_subs }}</li>
+			<li>Start Date : {{ cfpround.start.strftime('%Y-%m-%d %H:%M') }}</li>
+			<li>Stop Date : {{ cfpround.stop.strftime('%Y-%m-%d %H:%M') }}</li>
+		</ul>
+		<a class="btn btn-primary" href="{{ url_for('.round_edit', round_id=cfpround.id) }}">Edit</a>
+		<a class="btn btn-warning" href="{{ url_for('.round_status', round_id=cfpround.id, status='open') }}">Force Open</a>
+		<a class="btn btn-danger" href="{{ url_for('.round_status', round_id=cfpround.id, status='closed') }}">Force Closed</a>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

@@ -18,6 +18,10 @@ class RoundForm(Form):
     max_subs = IntegerField('Maximum Submissions')
 
 
+class RoundValidationForm(Form):
+    validation = TextField('Type Yes to validate', validation=[Required()])
+
+
 class SubmissionTypeForm(Form):
     sub_type = SelectField('Submission Type', choices=(
         ('talk', 'Talk'),
@@ -39,3 +43,7 @@ class SpeakerForm(Form):
     email = EmailField('Email', validators=[Required(), Email()])
     name = TextField('Name', validators=[Required()])
     bio = TextAreaField('Bio', description='Markdown Formatted')
+
+
+class WithdrawForm(Form):
+    email = EmailField('Email', validators=[Email(), Required()])

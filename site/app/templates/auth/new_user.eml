@@ -1,7 +1,0 @@
-Welcome to the {{ g.settings['CONFERENCE_NAME'] }} website.  This site intends to cover all of your conference needs, however, before we begin, you will need to click the link below to activate your account and set your password.
-
-{{ g.settings['BASE_URL'] }}/user/forgot/{{ user.forgot }}
-
-Regards,
-
-{{ g.settings['CONFERENCE_NAME'] }} Staff

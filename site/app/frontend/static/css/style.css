@@ -1,0 +1,15 @@
+.navbar-brand>img {
+	display: block;
+	position: relative;
+	top: -20.5px;
+	height: 80px;
+}
+
+.nav-tabs {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+#profile {
+	margin-bottom: 10px;
+}

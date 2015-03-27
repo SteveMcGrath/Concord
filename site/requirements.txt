@@ -1,0 +1,9 @@
+Flask
+Flask-Script
+Flask-SQLAlchemy
+Flask-User
+Flask-Migrate
+Flask-Bootstrap
+Flask-Mail
+Flask-WTF
+WTForms-Alchemy

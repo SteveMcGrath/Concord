@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	<div class="container">
+		<ul class="nav nav-pills" id="profile">
+			{{ utils.nav_item('user.profile', 'Profile', user_id=current_user.id) }}
+		</ul>
+	</div>
+	<div class="well">
+		<legend>{{ user.name }}</legend>
+		{{ user.bio|safe }}
+	</div>
+	<div class="well">
+		<form method="POST" class="form-horizontal">
+		{{ form.hidden_tag() }}
+		{{ utils.render_field(form.name) }}
+		{{ utils.render_field(form.email) }}
+		{{ utils.render_field(form.bio_md) }}
+		{{ utils.render_field(form.shirt) }}
+		{% if current_user.has_role('admin') %}
+		{{ utils.render_field(form.roles) }}
+		{% endif %}
+		<form class="form-group">
+			<div class="col-lg-offset-4 col-lg-8">
+				<input class="btn btn-primary" type="submit" value="Update" />
+			</div>
+		</div>
+		</form>
+	</form>
+</div>
+{% endblock %}

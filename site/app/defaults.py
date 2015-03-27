@@ -45,3 +45,11 @@ CLASS_LENGTHS = (
     ('360', '6 Hours'),
     ('480', '8 Hours'),
 )
+TALK_TOPICS = (
+    ('red team', 'Red Team'),
+    ('blue team', 'Blue Team'),
+    ('purple team', 'Purple Team'),
+)
+CLASS_TOPICS = (
+    ('training', 'Training'),
+)

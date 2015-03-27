@@ -23,8 +23,10 @@ class Submission(db.Model):
     __tablename__ = 'submissions'
     id = db.Column(db.Integer, primary_key=True)
     round_id = db.Column(db.Integer, db.ForeignKey('rounds.id'))
+    status = db.Column(db.String(20), default='generated')
     title = db.Column(db.String(255))
     type = db.Column(db.String(10))
+    topic = db.Column(db.String(30))
     abstract_md = db.Column(db.Text)
     outline_md = db.Column(db.Text)
     requests_md = db.Column(db.Text)

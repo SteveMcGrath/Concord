@@ -26,8 +26,9 @@ class SubmissionTypeForm(Form):
 
 
 class SubmissionForm(Form):
-    title = TextField('Submission Title')
-    length = SelectField('Length of the Talk')
+    title = TextField('Title')
+    topic = SelectField('Topic')
+    length = SelectField('Length')
     abstract_md = TextAreaField('Abstract', description='Markdown Formatted')
     outline_md = TextAreaField('Outline', description='Markdown Formatted')
     requests_md = TextAreaField('Are there any special requests or anything else we need to be aware of?', 
@@ -37,4 +38,4 @@ class SubmissionForm(Form):
 class SpeakerForm(Form):
     email = EmailField('Email', validators=[Required(), Email()])
     name = TextField('Name', validators=[Required()])
-    bio = TextAreaField('Bio')
+    bio = TextAreaField('Bio', description='Markdown Formatted')

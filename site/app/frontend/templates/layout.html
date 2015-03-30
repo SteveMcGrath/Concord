@@ -70,7 +70,7 @@
                 </ul>
                 {% endif %}
 #}
- {#               {{ utils.nav_item('user.index', 'Profile', user_id=g.user.id) }} #}
+                {{ utils.nav_item('user.index', 'Profile') }}
                 {{ utils.nav_item('auth.logout', 'Logout') }}
                 {% else %}
                 {{ utils.nav_item('auth.login', 'Login') }}

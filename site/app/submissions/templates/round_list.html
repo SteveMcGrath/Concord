@@ -17,5 +17,8 @@
 		<a class="btn btn-danger" href="{{ url_for('.round_status', round_id=cfpround.id, status='closed') }}">Force Closed</a>
 	</div>
 	{% endfor %}
+	<div class="well">
+		<a class="btn btn-primary" href="{{ url_for('.round_edit') }}">New Round</a>
+	</div>
 </div>
 {% endblock %}

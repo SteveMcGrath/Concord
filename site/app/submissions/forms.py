@@ -13,13 +13,13 @@ class RoundForm(Form):
         ('reviewed', 'Reviews Completed'),
         ('completed', 'Round Closed & Completed'),
     ))
-    start = DateTimeField('Automatically Open')
-    stop = DateTimeField('Automaticially Close')
+    start = DateField('Automatically Open', format='%Y-%m-%d')
+    stop = DateField('Automaticially Close', format='%Y-%m-%d')
     max_subs = IntegerField('Maximum Submissions')
 
 
 class RoundValidationForm(Form):
-    validation = TextField('Type Yes to validate', validation=[Required()])
+    validation = TextField('Type Yes to validate', validators=[Required()])
 
 
 class SubmissionTypeForm(Form):
@@ -44,6 +44,9 @@ class SpeakerForm(Form):
     name = TextField('Name', validators=[Required()])
     bio = TextAreaField('Bio', description='Markdown Formatted')
 
+
+class ReviewForm(Form):
+    pass
 
 class WithdrawForm(Form):
     email = EmailField('Email', validators=[Email(), Required()])

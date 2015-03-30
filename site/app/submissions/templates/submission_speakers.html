@@ -16,20 +16,26 @@
 				<td>{{ speaker.name }}</td>
 				<td>{{ speaker.email }}</td>
 				<td>
-					<a class="btn btn-primary" 
+					<div class="pull-right">
+					<a class="btn btn-xs btn-warning" 
 						href="{{ url_for('.submission_speaker_edit', sub_id=submission.id, speaker_id=speaker.id) }}">
 							Edit Speaker
 					</a>
+					</div>
 				</td>
 			</tr>
 			{% endfor %}
 			<tr>
 				<td colspan="3">
-					<a class="btn btn-primary" href="{{ url_for('.submission_speaker_edit', sub_id=submission.id) }}">
+					<div class="pull-right">
+					<a class="btn btn-xs btn-success" href="{{ url_for('.submission_speaker_edit', sub_id=submission.id) }}">
 						Add Speaker
 					</a>
+					</div>
 				</td>
 			</tr>
-	</div>
+		</tbody>
+	</table>
+	<a class="btn btn-primary" href="{{ url_for('.submission_review', sub_id=submission.id) }}">Review Submission</a>
 </div>
 {% endblock %}

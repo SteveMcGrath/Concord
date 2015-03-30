@@ -4,6 +4,7 @@
 <div class="container">
 	<div class="well">
 		<form method="POST" class="form-horizontal">
+			{{ form.hidden_tag() }}
 			{{ utils.render_field(form.validation) }}
 			<form class="form-group">
 				<div class="col-lg-offset-4 col-lg-8">

@@ -4,6 +4,7 @@
 <div class="container">
 	<div class="well">
 		<form method="POST" class="form-horizontal">
+			{{ form.hidden_tag() }}
 			{{ utils.render_field(form.email) }}
 			{{ utils.render_field(form.name) }}
 			{{ utils.render_field(form.bio) }}

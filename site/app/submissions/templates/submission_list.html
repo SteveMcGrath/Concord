@@ -1,23 +1,30 @@
 {% extends "profile_layout.html" %}
 {% block profile_content %}
 {{ super() }}
+{% if cfpround %}
+<a class="btn btn-primary" href="{{ url_for('.submission_type') }}">New Submission</a>
+{% endif %}
 <table class="table table-striped">
 	{% for submission in current_user.submissions %}
 	<tr>
 		<td>{{ submission.title }}</td>
 		<td>{{ submission.status }}</td>
 		<td>
+			{% if submission.status in ['generated', 'submitted'] %}
+			<a class="btn btn-xs btn-info" href="{{ url_for('.submission_edit', sub_id=submission.id) }}">
+				Edit
+			</a>
+			{% endif %}
 			{% if submission.speakers|length > 1 %}
-			<a class="btn btn-warning" href="{{ url_for('.submission_withdraw', w_type='speaker', sub_id=submission.id) }}">
+			<a class="btn btn-xs btn-warning" href="{{ url_for('.submission_withdraw', w_type='speaker', sub_id=submission.id) }}">
 				Withdraw as Speaker
 			</a>
 			{% endif %}
-			<a class="btn btn-danger" href="{{ url_for('.submission_withdraw', w_type='submission', sub_id=submission.id) }}">
+			<a class="btn btn-xs btn-danger" href="{{ url_for('.submission_withdraw', w_type='submission', sub_id=submission.id) }}">
 				Withdraw Talk
 			</a>			
 		</td>
 	</tr>
 	{% endfor %}
-	{% endif %}
 </table>
 {% endblock %}

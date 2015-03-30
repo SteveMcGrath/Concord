@@ -4,8 +4,7 @@ from wtforms.fields import TextField, SelectField, TextAreaField
 from flask.ext.wtf.html5 import EmailField
 from wtforms.validators import Required, Email
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from app.auth.models import Role
-from .models import User
+from app.auth.models import Role, User
 
 def get_roles():
     return Role.query

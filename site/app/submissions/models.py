@@ -1,14 +1,15 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
-from app.user.models import User
+from app.auth.models import User
+import mistune
 
 
 class Round(db.Model):
     __tablename__ = 'rounds'
     id = db.Column(db.Integer, primary_key=True)
     max_subs = db.Column(db.Integer, default=0)
-    start = db.Column(db.DateTime)
-    stop = db.Column(db.DateTime)
+    start = db.Column(db.Date)
+    stop = db.Column(db.Date)
     status = db.Column(db.String(20), default='pending')
 
 
@@ -32,4 +33,17 @@ class Submission(db.Model):
     requests_md = db.Column(db.Text)
     length = db.Column(db.Integer)
     speakers = db.relationship('User', secondary='speakers', backref='submissions')
+    round = db.relationship('Round', backref='submissions')
+
+    @hybrid_property
+    def abstract(self):
+        return mistune.markdown(self.abstract_md, escape=True)
+
+    @hybrid_property
+    def requests(self):
+        return mistune.markdown(self.abstract_md, escape=True)
+
+    @hybrid_property
+    def outline(self):
+        return mistune.markdown(self.outline_md, escape=True)
     

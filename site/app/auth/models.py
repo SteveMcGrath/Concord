@@ -4,6 +4,7 @@ from flask.ext.login import UserMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 from app.extensions import db
+import mistune
 
 
 class Role(db.Model):
@@ -26,6 +27,9 @@ class User(db.Model, UserMixin):
     _password = db.Column(db.LargeBinary(128))
     _salt = db.Column(db.String(40))
     forgot = db.Column(db.String(32))
+    name = db.Column(db.String(120))
+    shirt = db.Column(db.String(10))
+    bio_md = db.Column(db.Text)
     roles = db.relationship('Role', secondary='user_roles', backref='users')
 
     @hybrid_property
@@ -38,6 +42,16 @@ class User(db.Model, UserMixin):
             self._salt = bytes(SystemRandom().getrandbits(128))
         self._password = self._hash_password(value)
         self.forgot = None
+
+    @hybrid_property
+    def bio(self):
+        if not self.bio_md:
+            self.bio_md = ''
+        return mistune.markdown(self.bio_md, escape=True)
+
+    @bio.setter
+    def bio(self, value):
+        self.bio_md = value
 
     def _hash_password(self, password):
         passwd = sha512()

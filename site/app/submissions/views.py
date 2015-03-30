@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, current_app, flash
 from flask.ext.login import current_user, login_required
 from app.extensions import db
-from .models import User, Round, Submission
+from app.auth.models import User
+from .models import Round, Submission
 from .forms import (RoundForm, SubmissionTypeForm, SubmissionForm, SpeakerForm,
-                    WithdrawForm, RoundValidationForm)
+                    WithdrawForm, RoundValidationForm, ReviewForm)
 
 subs = Blueprint('subs', __name__, template_folder='templates', static_folder=None)
 
@@ -44,7 +45,7 @@ def round_edit(round_id=None):
 
 @subs.route('/round/<status>/<int:round_id>', methods=['GET', 'POST'])
 @login_required
-def round_status(round_id):
+def round_status(status, round_id):
     if current_user.has_role('chair') and status in ['open', 'close']:
         cfpround = Round.query.filter_by(id=round_id).first()
         if not cfpround:
@@ -68,10 +69,12 @@ def submission_type():
     form = SubmissionTypeForm()
     if form.validate_on_submit():
         submission = Submission()
+        submission.speakers.append(current_user)
         cfpround = Round.query.filter_by(status='open').first()
         submission.round_id = cfpround.id
-        form.populate_obj(submission)
+        submission.type = form.sub_type.data
         db.session.add(submission)
+        db.session.commit()
         return redirect(url_for('.submission_edit', sub_id=submission.id))
     return render_template('submission_type.html', form=form)
 
@@ -94,7 +97,7 @@ def submission_edit(sub_id):
         form.populate_obj(submission)
         db.session.commit()
         return redirect(url_for('.submission_speakers', sub_id=submission.id))
-    return render_template('submission_detail.html', form=form, submission=submission)
+    return render_template('submission_details.html', form=form, submission=submission)
 
 
 @subs.route('/submit/speakers/<int:sub_id>/list')
@@ -120,8 +123,8 @@ def submission_speaker_edit(sub_id, speaker_id=None):
             flash('This speaker is not valid for this submission', 'danger')
             return redirect(url_for('.submission_speakers'))
     else:
-        speaker = Speaker()
-    form = SpeakerForm()
+        speaker = User()
+    form = SpeakerForm(obj=speaker)
     if form.validate_on_submit():
         form.populate_obj(speaker)
         if speaker not in submission.speakers:
@@ -137,10 +140,10 @@ def submission_speaker_edit(sub_id, speaker_id=None):
             flash('Speaker updated', 'success')
         db.session.commit()
         return redirect(url_for('.submission_speakers', sub_id=submission.id))
-    return render_template('submission_speaker_edit.html', form=form)
+    return render_template('submission_speaker_edit.html', form=form, submission=submission)
 
 
-@subs.route('/submit/review/<int:id>', methods=['GET', 'POST'])
+@subs.route('/submit/review/<int:sub_id>', methods=['GET', 'POST'])
 def submission_review(sub_id):
     submission = Submission.query.filter_by(id=sub_id).first()
     if not submission or current_user not in submission.speakers:
@@ -153,13 +156,14 @@ def submission_review(sub_id):
             submission.round.status = 'closed'
         db.session.commit()
         flash('Submission submitted, thank you!', 'success')
-        return redirect(url_for('user.index'))
+        return redirect(url_for('.submission_list'))
     return render_template('submission_review.html', form=form, submission=submission)
 
 
 @subs.route('/submission/list')
 def submission_list():
-    return render_template('submission_list.html')
+    cfpround = Round.query.filter_by(status='open').first()
+    return render_template('submission_list.html', cfpround=cfpround)
 
 
 @subs.route('/submission/withdraw/<w_type>/<int:sub_id>', methods=['GET', 'POST'])
@@ -175,7 +179,7 @@ def submission_withdraw(w_type, sub_id):
                 submission.speakers.remove(current_user)
                 flash('You have withdrawn from this submission', 'warning')
             if w_type == 'submission' or len(submission.speakers) == 0:
-                db.session.remove(submission)
+                db.session.delete(submission)
                 flash('Your submission has been withdrawn', 'warning')
             db.session.commit()
             return redirect(url_for('.submission_list'))

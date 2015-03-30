@@ -5,8 +5,8 @@
 	<div class="well">
 		<form method="POST" class="form-horizontal">
 			{{ form.hidden_tag() }}
-			{{ utils.render_field(form.email) }}
-			{{ utils.render_field(form.password) }}
+			{{ utils.render_field(form.email, errors=form.errors) }}
+			{{ utils.render_field(form.password, errors=form.errors) }}
 			<form class="form-group">
 				<div class="col-lg-offset-4 col-lg-8">
 					<input class="btn btn-primary" type="submit" value="Login" />

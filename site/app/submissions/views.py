@@ -53,7 +53,7 @@ def round_status(status, round_id):
             return redirect(url_for('.round_list'))
         form = RoundValidationForm()
         if form.validate_on_submit():
-            if form.validation.data == 'yes':
+            if form.validation.data.lower() == 'yes':
                 cfpround.status = status
             db.session.commit()
             flash('Round forcefully opened', 'success')
@@ -174,7 +174,7 @@ def submission_withdraw(w_type, sub_id):
         return redirect(url_for('.submission_list'))
     form = WithdrawForm()
     if form.validate_on_submit():
-        if form.email.data == current_user.email:
+        if form.email.data.lower() == current_user.email.lower():
             if w_type == 'speaker':
                 submission.speakers.remove(current_user)
                 flash('You have withdrawn from this submission', 'warning')

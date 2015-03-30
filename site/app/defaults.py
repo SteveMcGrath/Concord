@@ -10,6 +10,8 @@ MAIL_DEFAULT_SENDER = 'SampleCon <no-reply@samplecon.com>'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'database.db')
 SQLALCHEMY_MIGRATE_REPO = 'db_repository'
 SERVER_NAME = 'localhost:5000'
+SUBMISSION_AGE = 24
+TICKET_AGE = 1
 SHIRT_SIZES = (
     ('M:S', 'Mens Small'),
     ('M:M', 'Mens Medium'),

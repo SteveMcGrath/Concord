@@ -3,13 +3,16 @@
 {{ super() }}
 {% if cfpround %}
 <a class="btn btn-primary" href="{{ url_for('.submission_type') }}">New Submission</a>
+<div class="row" style="margin: 5px;"></div>
 {% endif %}
 <table class="table table-striped">
 	{% for submission in current_user.submissions %}
 	<tr>
 		<td>{{ submission.title }}</td>
+		<td>{{ submission.type }}</td>
 		<td>{{ submission.status }}</td>
 		<td>
+			<div class="pull-right">
 			{% if submission.status in ['generated', 'submitted'] %}
 			<a class="btn btn-xs btn-info" href="{{ url_for('.submission_edit', sub_id=submission.id) }}">
 				Edit
@@ -22,7 +25,8 @@
 			{% endif %}
 			<a class="btn btn-xs btn-danger" href="{{ url_for('.submission_withdraw', w_type='submission', sub_id=submission.id) }}">
 				Withdraw Talk
-			</a>			
+			</a>
+			</div>		
 		</td>
 	</tr>
 	{% endfor %}

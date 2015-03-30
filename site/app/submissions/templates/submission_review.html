@@ -11,6 +11,14 @@
 			<li>Length : {{ submission.length }}</li>
 		</ul>
 		<div class="row">
+			<h5>Speakers</h5>
+			<ul>
+				{% for speaker in submission.speakers %}
+				<li><strong>{{ speaker.name }}</strong> - {{ speaker.email }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="row">
 			<h5>Abstract</h5>
 			{{ submission.abstract|safe }}
 		</div>

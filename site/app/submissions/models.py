@@ -1,6 +1,7 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from app.auth.models import User
+from datetime import datetime
 import mistune
 
 
@@ -23,6 +24,7 @@ class Speaker(db.Model):
 class Submission(db.Model):
     __tablename__ = 'submissions'
     id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime, default=datetime.now())
     round_id = db.Column(db.Integer, db.ForeignKey('rounds.id'))
     status = db.Column(db.String(20), default='generated')
     title = db.Column(db.String(255))

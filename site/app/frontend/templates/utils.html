@@ -48,7 +48,7 @@
     <label class="col-lg-2 control-label" for="{{ field.id }}">
         {{ field.label.text }}{% if field.name in errors %} - <small><strong>{{ errors[field.name][0] }}</strong></small>{% endif %}
     </label>
-    <div class="col-lg-offset-4 col-lg-8">
+    <div class="col-lg-10">
         {{ field(class_='form-control', read_only=read_only) }}
     </div>
 </div>

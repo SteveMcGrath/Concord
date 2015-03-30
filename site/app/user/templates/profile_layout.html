@@ -6,6 +6,9 @@
 		<ul class="nav nav-pills" id="profile">
 			{{ utils.nav_item('user.profile', 'Profile', user_id=current_user.id) }}
 			{{ utils.nav_item('subs.submission_list', 'Submissions') }}
+			{% if current_user.has_role('chair') %}
+			{{ utils.nav_item('subs.round_list', 'CFP Rounds') }}
+			{% endif %}
 		</ul>
 	</div>
 	{% block profile_content %}{% endblock %}

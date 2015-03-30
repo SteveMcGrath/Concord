@@ -6,7 +6,7 @@
 		<form method="POST" class="form-horizontal">
 			{{ form.hidden_tag() }}
 			{{ utils.render_field(form.validation) }}
-			<form class="form-group">
+			<div class="form-group">
 				<div class="col-lg-offset-4 col-lg-8">
 					<input class="btn btn-danger" type="submit" value="Yes, Force Update" />
 					<a class="btn btn-primary" href="{{ url_for('.round_list') }}">No, Don't Update</a>

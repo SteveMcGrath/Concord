@@ -3,11 +3,24 @@
 {{ super() }}
 <div class="container">
 	<div class="well">
+		{% if w_type == 'speaker' %}
+		<legend>Withdraw yourself from {{ submission.title }}?</legend>
+		<p>Are you sure that you want to withdraw yourself from this submission?  If you do, please
+			enter your email address below as verification that you want to perform this action.
+		</p>
+		{% else %}
+		<legend>Withdraw {{ submission.title }}</legend>
+		<p>Are you sure that you want to withdraw this submission?  
+			<strong>This cannot be undone.</strong>  
+			If you are sure that you wish to withdraw the submission, then please enter your 
+			email address below as verification that you actually wish to perform this action.
+		</p>
+		{% endif %}
 		<form method="POST" class="form-horizontal">
 			{{ form.hidden_tag() }}
 			{{ utils.render_field(form.email) }}
-			<form class="form-group">
-				<div class="col-lg-offset-4 col-lg-8">
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
 					<input class="btn btn-danger" type="submit" value="Yes, Withdraw" />
 					<a class="btn btn-primary" href="{{ url_for('.submission_list') }}">Return to List</a>
 				</div>

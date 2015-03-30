@@ -68,7 +68,10 @@ class User(db.Model, UserMixin):
         self.forgot = buf.hexdigest()
     
     def has_role(self, value):  # FIXME: currently non-optimal
-        if self.roles:
+        if value == 'any':
+            if len(self.roles) > 0:
+                return True
+        elif self.roles:
             for role in self.roles:
                 if role.name == value:
                     return True

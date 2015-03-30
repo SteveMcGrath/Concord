@@ -9,7 +9,7 @@
 			{{ utils.render_field(form.start, errors=form.errors) }}
 			{{ utils.render_field(form.stop, errors=form.errors) }}
 			{{ utils.render_field(form.max_subs, errors=form.errors) }}
-			<form class="form-group">
+			<div class="form-group">
 				<div class="col-lg-offset-4 col-lg-8">
 					<input class="btn btn-primary" type="submit" value="Update" />
 					<a class="btn btn-danger" href="{{ url_for('.round_list') }}">Cancel</a>

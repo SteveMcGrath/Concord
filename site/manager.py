@@ -31,6 +31,23 @@ manager.add_command('db', MigrateCommand)
 
 
 @manager.command
+def cron():
+    from datetime import datetime, timedelta
+    from app.submissions.models import Submission
+
+    # Incomplete Submission Cleanout
+    yesterday = datetime.now() - timedelta(hours=app.config['SUBMISSION_AGE'])
+    subs = Submission.query.filter_by(state='generated').filter(Submission.created < yesterday).all()
+    db.session.delete(subs)
+    print 'Cleaned out %d stale submissions' % len(subs)
+
+    # Incomplete Ticket Sales Cleanout
+
+
+    # Incomplete Training Sales Cleanout
+
+
+@manager.command
 def populate():
     admin = Role(name='admin')
     db.session.add(admin)

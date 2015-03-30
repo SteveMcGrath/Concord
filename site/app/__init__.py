@@ -30,7 +30,4 @@ def create_app():
     @app.route('/')
     def homepage(): 
         return redirect(url_for('frontend.index'))
-
-    print app.url_map
-
     return app

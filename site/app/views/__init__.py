@@ -56,11 +56,6 @@ def events():
     return render_template('events.html', title='Events')
 
 
-@app.route('/about')
-def about():
-    return render_template('construction.html', title='About Us')
-
-
 @app.route('/cft')
 def cft():
     return render_template('cft/cft.html', title='Call for Training')

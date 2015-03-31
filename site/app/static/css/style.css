@@ -48,6 +48,11 @@ body {
   max-height: 100px;
   max-width: 300px;
   padding: 2px;
+  -webkit-filter: contrast(100%);
+  -moz-filter: contrast(100%);
+  -ms-filter: contrast(100%);
+  -o-filter: contrast(100%);
+  filter: contrast(100%);
 }
 
 .sponsor-div {

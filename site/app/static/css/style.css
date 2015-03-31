@@ -47,4 +47,12 @@ body {
 .sponsor {
   max-height: 100px;
   max-width: 300px;
+  padding: 2px;
+}
+
+.sponsor-div {
+  float: left;
+  padding: 2px;
+  margin: 5px;
+  background-color: #bbb;
 }

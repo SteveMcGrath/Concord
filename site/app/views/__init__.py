@@ -41,9 +41,9 @@ def talks():
     return render_template('schedule/talks.html', title='Talks List')
 
 
-@app.route('/sponsors')
-def sponsors():
-    return render_template('construction.html', title='Sponsors')
+#@app.route('/sponsors')
+#def sponsors():
+#    return render_template('construction.html', title='Sponsors')
 
 
 @app.route('/location')
@@ -72,7 +72,7 @@ def news():
     return render_template('news.html', title='Conference News', posts=posts)
 
 
-@app.route('/spnsors')
+@app.route('/sponsors')
 def sponsors():
     return render_template('sponsors.html', title='CircleCityCon Sponsors')
 

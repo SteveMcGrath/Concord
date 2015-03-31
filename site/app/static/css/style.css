@@ -44,32 +44,7 @@ body {
   padding-bottom: 8px;
 }
 
-.sponsor-diamond {
-  max-height: 150px;
-  max-width: 400px;
-}
-
-.sponsor-gold {
-  max-height: 120px;
+.sponsor {
+  max-height: 100px;
   max-width: 300px;
-}
-
-.sponsor-silver {
-  max-height: 100px;
-  max-width: 250px;
-}
-
-.sponsor-bronze {
-  max-height: 80px;
-  max-width: 200px;
-}
-
-.sponsor-basic {
-  max-height: 70px;
-  max-width: 150px;
-}
-
-.sponsor-bar {
-  max-height: 100px;
-  max-width: 250px;
 }

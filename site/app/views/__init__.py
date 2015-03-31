@@ -72,6 +72,11 @@ def news():
     return render_template('news.html', title='Conference News', posts=posts)
 
 
+@app.route('/spnsors')
+def sponsors():
+    return render_template('sponsors.html', title='CircleCityCon Sponsors')
+
+
 @app.route('/news/edit/<int:post_id>', methods=['GET', 'POST'])
 @app.route('/news/new', methods=['GET', 'POST'])
 @login_required

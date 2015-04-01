@@ -119,12 +119,12 @@ def charge_card(purchase_hash):
     # Now to update the payment object with the payment information, append
     # the ticket codes to the purchase, and then to mark the payment as done.
     if purchase.ticket_type in ['family', 'attendee_x2']:
-        purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee', date=datetime.now()))
-        purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee', date=datetime.now()))
+        purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee'))
+        purchase.tickets.append(Ticket(purchase.email, ticket_type='attendee'))
     else:
-        purchase.tickets.append(Ticket(purchase.email, ticket_type=purchase.ticket_type, date=datetime.now()))
+        purchase.tickets.append(Ticket(purchase.email, ticket_type=purchase.ticket_type))
     for i in range(purchase.children):
-        purchase.tickets.append(Ticket(purchase.email, ticket_type='child', date=datetime.now()))
+        purchase.tickets.append(Ticket(purchase.email, ticket_type='child'))
     purchase.completed = True
 
     # If there is a discount code involved, we will need to decriment the use

@@ -118,6 +118,7 @@ class Ticket(db.Model):
         self.ticket_type = ticket_type
         self.email = email
         self.ticket_hash = gen_hash(email, str(time()), str(random()))
+        self.date = datetime.now()
 
     def qrgen(self, encode=True):
         imgbuf = StringIO()

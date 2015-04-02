@@ -7,7 +7,7 @@
 {% endif %}
 
 <div class="container">
-	{% for post in posts %}
+	{% for post in posts|reverse %}
 	{% if not post.draft %}
 	<div class="well">
 		<legend>{{ post.title }}{% if g.user.is_authenticated() %}<a class="btn pull-right" href="{{ url_for('news_edit', post_id=post.id) }}">Edit Post</a>{% endif %}</legend>

@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	<div class="well">
+		<legend>Sponsor Tiers</legend>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<td>Weight</td>
+					<td>Name</td>
+					<td># Sponsors</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for tier in tiers %}
+				<tr>
+					<td>{{ tier.weight }}</td>
+					<td>{{ tier.name }}</td>
+					<td>{{ tier.sponsors|length }}</td>
+					<td>
+						<a class="btn btn-xs btn-warning" href="{{ url_for('.tier_edit', tier_id=tier.id) }}">Edit</a>
+						<a class="btn btn-xs btn-danger" href="{{ url_for('.obj_remove', obj_type='tier', obj_id=tier.id) }}">Remove</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="well">
+		<legend>Sponsor Listing</legend>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<td>Name</td>
+					<td>Image</td>
+					<td>Tier</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for sponsor in sponsors %}
+				<tr>
+					<td>{{ sponsor.name }}</td>
+					<td><img src="{{ url_for('.image', sponsor_id=sponsor.id) }}" /></td>
+					<td>
+						<a class="btn btn-xs btn-warning" href="{{ url_for('.sponsor_edit', sponsor_id=sponsor.id) }}">Edit</a>
+						<a class="btn btn-xs btn-danger" href="{{ url_for('.obj_remove', obj_type='sponsor', obj_id=sponsor.id) }}">Remove</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

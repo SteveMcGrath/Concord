@@ -67,7 +67,7 @@ class User(db.Model, UserMixin):
         buf.update(bytes(SystemRandom().getrandbits(128)))
         self.forgot = buf.hexdigest()
     
-    def has_role(self, value):  # FIXME: currently non-optimal
+    def has_role(self, value='any'):  # FIXME: currently non-optimal
         if value == 'any':
             if len(self.roles) > 0:
                 return True

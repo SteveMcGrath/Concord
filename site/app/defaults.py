@@ -12,6 +12,10 @@ SQLALCHEMY_MIGRATE_REPO = 'db_repository'
 SERVER_NAME = 'localhost:5000'
 SUBMISSION_AGE = 24
 TICKET_AGE = 1
+SPONSOR_IMAGE_SIZE = (100,300)
+SPONSOR_IMAGE_BACKGROUND = (255, 255, 255, 255)
+SPONSOR_IMAGE_FOLDER = 'uploads/images'
+MAX_REVIEWS = 5
 SHIRT_SIZES = (
     ('M:S', 'Mens Small'),
     ('M:M', 'Mens Medium'),

@@ -13,3 +13,13 @@
 #profile {
 	margin-bottom: 10px;
 }
+
+.sponsor {
+	padding: 2px;
+	margin: 5px;
+}
+
+.sponsor > a > img {
+	max-height: 100px;
+	max-width: 300px;
+}

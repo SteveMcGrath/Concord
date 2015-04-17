@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<div class="container">
+	{% for tier in tiers %}
+	<div class="row">
+		<div class="col-lg-2">
+			<h3>{{ tier.name }}</h3>
+		</div>
+		<div class="col-lg-10">
+			{% for sponsor in tier.sponsors %}
+			<div class="sponsor"><a href="{{ sponsor.link }}"><img src="{{ url_for('.image', sponsor_id=sponsor.id) }}"></a></div>
+			{% endfor %}
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

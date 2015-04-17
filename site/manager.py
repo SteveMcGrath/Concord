@@ -10,26 +10,6 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 
-#@manager.command
-#def setting(name=None, value=None):
-#    if name:
-#        setting = Setting.query.filter_by(name=name).first()
-#        if value:
-#            if setting:
-#                setting.value = value
-#                db.session.merge(setting)
-#            else:
-#                setting = Setting(name=name, value=value)
-#                db.session.add
-#            db.session.flush()
-#            db.session.commit()
-#        else:
-#            print '%s = %s' % (setting.name, setting.value)
-#    else:
-#        for setting in Setting.query.all():
-#            print setting.name
-
-
 @manager.command
 def cron():
     from datetime import datetime, timedelta

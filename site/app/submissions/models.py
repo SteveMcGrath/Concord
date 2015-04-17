@@ -48,4 +48,9 @@ class Submission(db.Model):
     @hybrid_property
     def outline(self):
         return mistune.markdown(self.outline_md, escape=True)
+
+    @hybrid_property
+    def avg_score(self):
+        scores = [r.score for r in self.reviews]
+        return sum(scores) / float(len(scores))
     

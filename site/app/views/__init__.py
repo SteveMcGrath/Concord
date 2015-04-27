@@ -23,7 +23,7 @@ def home():
 
 @app.route('/schedule')
 def schedule():
-    return render_template('construction.html', title='Schedule')
+    return render_template('schedule/schedule.html', title='Schedule')
 
 
 @app.route('/schedule/bios')

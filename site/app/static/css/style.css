@@ -61,3 +61,25 @@ body {
   margin: 5px;
   background-color: #bbb;
 }
+
+.multi-sched {
+  margin-left: 0px;
+}
+
+.sched-item {
+  margin: 2px;
+  border: 2px;
+  border-color: #bbb;
+  border-style: solid;
+}
+
+.sched-footer {
+  bottom: 0px;
+  background-color: #bbb;
+  color: #000;
+}
+
+.sched-body {
+  min-height: 50px;
+  text-align: center;
+}

@@ -17,7 +17,7 @@ def open_classes():
         print c['name'], seats, c['seats'], seats < c['seats']
         if seats < c['seats']:
             sel_list = sel_list + ((training, '%s ($%s USD)' % (c['name'], c['price'])),)
-    return sel_list
+    return sorted(sel_list, key=lambda x: x[1])
 
 
 def gen_tickets():
@@ -31,11 +31,11 @@ def gen_tickets():
     return sel_list
 
 
-def training_options():
-    sel_list = ()
+#def training_options():
+#    sel_list = ()
     #for tclass in Training.query().filter_by(accepted=True).all():
     #    sel_list = sel_list + ((tclass.id, '%s ($%s USD)' % (tclass.name, tclass.price)))
-    return sel_list
+#    return sel_list
 
 
 class TrainingPurchaseForm(Form):

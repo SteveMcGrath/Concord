@@ -16,6 +16,7 @@ SPONSOR_IMAGE_SIZE = (100,300)
 SPONSOR_IMAGE_BACKGROUND = (255, 255, 255, 255)
 SPONSOR_IMAGE_FOLDER = 'uploads/images'
 MAX_REVIEWS = 5
+AUTO_ACCEPT = 4.5
 SHIRT_SIZES = (
     ('M:S', 'Mens Small'),
     ('M:M', 'Mens Medium'),

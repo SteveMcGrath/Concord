@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, abort, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import Ticket, Purchase,Seats
+from app.models import Ticket, Purchase,Seat
 from datetime import datetime, timedelta
 from sqlalchemy import func
 

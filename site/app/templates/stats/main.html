@@ -12,6 +12,11 @@
 			<li>{{ group[0]|capitalize }} Tickets : <strong>{{ group[1] }}</strong></li>
 			{% endfor %}
 		</ul>
+		<ul><h4>Class Breakdown</h4>
+			{% for class in classes %}
+			<li>{{ class[1] }} - {{ class[0] }}</li>
+			{% endfor %}
+		</ul>
 	</div>
 </div>
 {% endblock %}

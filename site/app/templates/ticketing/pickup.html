@@ -22,7 +22,9 @@
           {% if ticket.classes %}
           <ul><strong>Classes Registered for the ticket above</strong>
           {% for seat in ticket.classes %}
+            {% if seat.paid %}
             <li>{{ seat.name }}</li>
+            {% endif %}
           {% endfor %}
           </ul>
           {% endif %}

@@ -14,7 +14,12 @@
 		</ul>
 		<ul><h4>Class Breakdown</h4>
 			{% for class in classes %}
-			<li>{{ class[1] }} - {{ class[0] }}</li>
+			<li><strong></strong>{{ class[1] }}</strong> - {{ class[0] }}</li>
+			{% endfor %}
+		</ul>
+		<ul><h4>Shirt Breakdown</h4>
+			{% for shirt in shirts %}
+			<li><strong>{{ shirt[1] }}</strong> - {{ shirt[0] }}</li>
 			{% endfor %}
 		</ul>
 	</div>

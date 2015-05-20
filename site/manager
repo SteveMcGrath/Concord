@@ -13,7 +13,8 @@ def export(filename='tickets.json'):
             'type': ticket.ticket_type,
             'hash': ticket.ticket_hash,
             'email': ticket.email,
-            'name': ticket.name
+            'name': ticket.name,
+            'classes': [c.name for c in ticket.classes if c.paid],
         })
         count += 1
         print '[*] Exported %s/%s/%s' % (ticket.name, ticket.email, ticket.ticket_hash)

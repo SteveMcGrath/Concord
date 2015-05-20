@@ -33,6 +33,15 @@
 				<p><strong>{{ ticket.name or '' }}</strong></p>
 				<p>{{ ticket.ticket_hash or 'INVALID TICKET' }}</p>
 				<p>{{ ticket.email }}</p>
+				{% if ticket.classes|length > 0 %}
+				<p>
+					<ul><strong>Registered Classes</strong>
+						{% for class in ticket.classes %}
+						<li>{{ class }}</li>
+						{% endfor %}
+					</ul>
+				</p>
+				{% endif %}
 				<h1>{{ message|safe }}</h1>
 			</div>
 			<div class="panel-footer">

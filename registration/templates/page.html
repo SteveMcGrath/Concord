@@ -34,10 +34,10 @@
 				<p>{{ ticket.ticket_hash or 'INVALID TICKET' }}</p>
 				<p>{{ ticket.email }}</p>
 				{% if ticket.classes|length > 0 %}
-				<p>
-					<ul><strong>Registered Classes</strong>
+				<p><h2>Registered Classes</h2>
+					<ul class="list-group">
 						{% for class in ticket.classes %}
-						<li>{{ class }}</li>
+						<li class="list-group-item">{{ class }}</li>
 						{% endfor %}
 					</ul>
 				</p>

@@ -34,7 +34,7 @@
 				<p>{{ ticket.ticket_hash or 'INVALID TICKET' }}</p>
 				<p>{{ ticket.email }}</p>
 				{% if ticket.classes|length > 0 %}
-				<p><h2>Registered Classes</h2>
+				<p><h3>Registered Classes</h3>
 					<ul class="list-group">
 						{% for class in ticket.classes %}
 						<li class="list-group-item">{{ class }}</li>

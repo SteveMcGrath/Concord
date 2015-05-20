@@ -25,6 +25,7 @@ class Ticket(db.Model):
     redeemed = db.Column(db.Boolean, default=False)
     email = db.Column(db.Text)
     name = db.Column(db.Text)
+    classes = db.Column(db.PickleType)
 
 
 @app.route('/<tickethash>')

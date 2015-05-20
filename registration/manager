@@ -13,6 +13,7 @@ def tickets(filename='tickets.json'):
         entry.ticket_hash = ticket['hash']
         entry.email = ticket['email']
         entry.name = ticket['name']
+        entry.classes = ticket['classes']
         db.session.add(entry)
         count += 1
         print '[*] Added %s/%s/%s' % (ticket['name'], ticket['email'], ticket['hash'])

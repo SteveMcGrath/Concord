@@ -12,7 +12,7 @@ def stats_main_page():
     return render_template('stats/main.html',
         t_total=Ticket.query.filter().count(),
         t_new=Ticket.query.filter(Ticket.date >= seven_days_ago).count(),
-        classes=db.session.query(Seat.name, func.count(Seat.name)).filter(Seat.paid==True).group_by(Seat.name).all(),
+        classes=db.session.query(Seat.name, func.count(Seat.name), Seat.tag).filter(Seat.paid==True).group_by(Seat.name).all(),
         shirts=db.session.query(Ticket.shirt, func.count(Ticket.shirt)).group_by(Ticket.shirt).all(),
         t_types=db.session.query(Ticket.ticket_type, func.count(Ticket.ticket_type)).group_by(Ticket.ticket_type).all(),
     )

@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, abort, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase, Seat
+from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase, Seat, open_classes
 from sqlalchemy import desc
 from datetime import date, datetime
 import stripe
@@ -194,6 +194,7 @@ def ticket_print(ticket_id):
 def purchase_training(ticket_id):
     ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
     form = forms.TrainingPurchaseForm()
+    form.training.choices = open_classes()
     if form.validate_on_submit():
         purchase = TrainingPurchase()
         purchase.ticket_id = ticket.id

@@ -16,7 +16,7 @@
 			{% for class in classes %}
 				{% if class[1] <= (config.CLASSES[class[2]]['seats'] - 5) %}
 					<li class="ok">
-				{% elif class[1] <= config.CLASSES[class[2]]['seats'] %}
+				{% elif class[1] < config.CLASSES[class[2]]['seats'] %}
 					<li class="stats-warn">
 				{% else %}
 					<li class="stats-error">

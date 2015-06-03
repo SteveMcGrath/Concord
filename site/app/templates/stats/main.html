@@ -21,7 +21,7 @@
 				{% else %}
 					<li class="stats-error">
 				{% endif %}
-				[<strong>{{ class[1] }}/{{ config.CLASSES[class[2]]['seats'] }}</strong>] {{ class[0] }}</li>
+				[<strong>{{ '%2d'|format(class[1]) }}/{{ config.CLASSES[class[2]]['seats'] }}</strong>] {{ class[0] }}</li>
 			{% endfor %}
 		</ul>
 		<ul><h4>Shirt Breakdown</h4>

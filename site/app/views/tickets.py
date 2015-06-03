@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, abort, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager, forms
-from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase, Seat, open_classes
+from app.models import User, Ticket, Purchase, DiscountCode, TrainingPurchase, Seat
 from sqlalchemy import desc
 from datetime import date, datetime
 import stripe

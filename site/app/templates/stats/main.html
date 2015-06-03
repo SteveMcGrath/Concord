@@ -15,11 +15,11 @@
 		<ul><h4>Class Breakdown</h4>
 			{% for class in classes %}
 				{% if class[1] <= (config.CLASSES[class[2]]['seats'] - 5) %}
-					<li class="stats-ok">
+					<li class="ok">
 				{% elif class[1] <= config.CLASSES[class[2]]['seats'] %}
-					<li class="stats-warn">
+					<li class="warning">
 				{% else %}
-					<li class="stats-error">
+					<li class="error">
 				{% endif %}
 				<strong></strong>{{ class[1] }}</strong> - {{ class[0] }}</li>
 			{% endfor %}

@@ -17,9 +17,9 @@
 				{% if class[1] <= (config.CLASSES[class[2]]['seats'] - 5) %}
 					<li class="ok">
 				{% elif class[1] <= config.CLASSES[class[2]]['seats'] %}
-					<li class="warning">
+					<li class="stats-warn">
 				{% else %}
-					<li class="error">
+					<li class="stats-error">
 				{% endif %}
 				<strong></strong>{{ class[1] }}</strong> - {{ class[0] }}</li>
 			{% endfor %}

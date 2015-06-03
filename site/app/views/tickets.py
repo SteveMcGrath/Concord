@@ -194,7 +194,7 @@ def ticket_print(ticket_id):
 def purchase_training(ticket_id):
     ticket = Ticket.query.filter_by(ticket_hash=ticket_id).first_or_404()
     form = forms.TrainingPurchaseForm()
-    form.training.choices = open_classes()
+    form.training.choices = forms.open_classes()
     if form.validate_on_submit():
         purchase = TrainingPurchase()
         purchase.ticket_id = ticket.id

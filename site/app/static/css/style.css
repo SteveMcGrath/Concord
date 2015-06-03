@@ -83,3 +83,12 @@ body {
   min-height: 50px;
   text-align: center;
 }
+
+.stats-warn {
+  color: #FE9A2E;
+}
+
+.stats-error {
+  color: #FE2E2E;
+}
+}

@@ -5,7 +5,7 @@
 		<ul>
 			<li>Price : <strong>{{ purchase.price }}</strong></li>
 		</ul>
-		{% if purchase.price > 0 %}
+		{# {% if purchase.price > 0 %} #}
 			<script 
 				src="https://checkout.stripe.com/v2/checkout.js" 
 				class="stripe-button" 
@@ -14,9 +14,9 @@
 				data-name="{{ event_name }}", 
 				data-description="Training Purchase (${{ purchase.price }} USD)">
 			</script>
-		{% else %}
+		{# {% else %}
 			<input type="submit" value="Get Training" />
-		{% endif %}
+		{% endif %} #}
 	</form>
 </div>
 {% endblock %}
